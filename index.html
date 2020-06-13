@@ -3,10 +3,20 @@
 <head>
 <link rel="icon" href="http://www.john-irving.net/favicon.png">
 <link href="http://www.w3schools.com/w3css/4/w3.css"
-	  href='http://fonts.googleapis.com/css?family=Work Sans' rel='stylesheet'>
+	  href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet'>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+.firstDiv {
+	position: -webkit-sticky;
+	position: sticky;
+	top: 20px; left:20px;
+	width: 150px;
+	height: 200px;
+	border: 1px outset black;
+	background-color: white;
+	text-align: center;
+	}
 img {
  padding: 50px 50px 50px 50px;
   display: block;
@@ -14,15 +24,18 @@ img {
   margin-right: auto;
 }
 body {
-    font-family: 'Work Sans';font-size: 20px;
+    font-family: 'Inconsolata';
 }
 </style>
 </head>
 <body style="background-color:white;">
 
 <title>JOHN IRVING</title>
-<h2 style="color:black">John Irving</h2>
-<p style="color:black">Drawings 2018 - Present</p>
+<div class="firstDiv">
+	<p style="color:black;font-size:16px";>John Irving</p>
+	<p style="color:black;font-size:17px">Drawings 2018 - Present</p>
+</div>
+
 <img src="Drawings/CHKD.png" alt="CHKD">
 <img src="Drawings/coldcoat_1.png" alt="coldcoat">
 <img src="Drawings/FURRY_posterdark.png" alt="fantasy" style="width:699px;height:1080px;">
