@@ -23,33 +23,56 @@ a:link, a:visited {
   text-decoration: none;
 }
 :focus { outline: none; }
-.firstDiv {
-	position: -webkit-sticky;
-	position: sticky;
-	top: 20px; left:20px;
-	width: 150px;
-	height: 55px;
-	border: 0px outset black;
-	background-color: white;
-	text-align: center;
-	}
-	.drawingDiv {
-	position: -webkit-sticky;
-	position: sticky;
-	top: 80px; left:20px;
-	width: 150px;
-	height: 78px;
-	border: 0px outset black;
-	background-color: white;
-	text-align: center;
-	}
-	.firstDiv:hover {border:1px dashed;}
-	.drawingDiv:hover {border:1px dashed;}
 img {
  padding: 0px 50px 0px 50px;
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+.firstDiv {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 20px; left:20px;
+  width: max-content;
+  text-align: center;
+  background: linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
+  padding: 10px;
+  animation: border-dance 4s infinite linear;
+}
+.firstDiv:hover { background: linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
+  padding: 10px;
+  animation: border-dance 4s infinite linear;
+  }
+.drawingDiv {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 100px; left:20px;
+  width: 150px;
+  height: 120px;
+  text-align: center;
+  background: linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
+  padding: 10px;
+  animation: border-dance 4s infinite linear;
+}
+.drawingDiv:hover { background: linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
+  padding: 10px;
+  animation: border-dance 4s infinite linear;
+  }
+@keyframes border-dance {
+  0% {
+    background-position: 0 0, 100% 100%, 0 100%, 100% 0;
+  }
+  100% {
+    background-position: 100% 0, 0 100%, 0 0, 100% 100%;
+  }
 }
 </style>
 </head>
@@ -62,6 +85,6 @@ img {
 <div class="drawingDiv">
 	<a href="http://john-irving.net/Drawings_2018_Present">Drawings 2018-Present</a>
 </div>
-<img src="Drawings/CHKD.png" alt="CHKD"">
+<img src="Drawings/welcomeSIGN.png" alt="Welcome"">
 </body>
 </html>
