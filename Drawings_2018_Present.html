@@ -16,7 +16,7 @@ body {
 a:link, a:visited {
   border: none;
   background-color: inherit;
-  padding: 14px 28px;
+  padding: 0px 0px;
   font-size: 16px;
   cursor: pointer;
   display: inline-block;
@@ -24,7 +24,7 @@ a:link, a:visited {
 }
 :focus { outline: none; }
 img {
- padding: 50px 50px 50px 50px;
+ padding: 0px 50px 0px 50px;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -38,33 +38,35 @@ img {
   background: linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%);
   background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
   background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
-  padding: 10px;
+  padding: 38px 38px;
   animation: border-dance 4s infinite linear;
 }
 .firstDiv:hover { background: linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%);
   background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
   background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
-  padding: 10px;
+  padding: 38px 38px;
   animation: border-dance 4s infinite linear;
   }
 .drawingDiv {
   position: -webkit-sticky;
   position: sticky;
-  top: 100px; left:20px;
+  top: 120px; left:20px;
   width: 150px;
   height: 120px;
   text-align: center;
   background: linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%);
   background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
   background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
-  padding: 10px;
+  padding: 28px 28px;
   animation: border-dance 4s infinite linear;
+  float: left;
 }
 .drawingDiv:hover { background: linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%);
   background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
   background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
-  padding: 10px;
+  padding: 28px 28px;
   animation: border-dance 4s infinite linear;
+  float: left;
   }
 @keyframes border-dance {
   0% {
@@ -73,7 +75,7 @@ img {
   100% {
     background-position: 100% 0, 0 100%, 0 0, 100% 100%;
   }
-}
+
 </style>
 </head>
 <body style="background-color:white;">
