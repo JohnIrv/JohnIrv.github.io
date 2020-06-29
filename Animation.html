@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="icon" href="http://www.john-irving.net/favicon.png">
+<link href="http://www.w3schools.com/w3css/4/w3.css"
+	  href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet'>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    font-family: 'Inconsolata';
+}
+.module {
+  cursor: url('path-to-image.png'), auto;	
+}
+a:link, a:visited {
+  border: none;
+  background-color: inherit;
+  padding: 0px 0px;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: none;
+}
+:focus { outline: none; }
+img {
+ padding: 0px 50px 0px 50px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.firstDiv {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 20px; left:20px;
+  width: max-content;
+  text-align: center;
+  background: linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
+  padding: 38px 38px;
+  animation: border-dance 4s infinite linear;
+}
+.firstDiv:hover { background: linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
+  padding: 38px 38px;
+  animation: border-dance 4s infinite linear;
+  }
+.drawingDiv {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 120px; left:20px;
+  width: 150px;
+  height: 120px;
+  text-align: center;
+  background: linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
+  padding: 28px 28px;
+  animation: border-dance 4s infinite linear;
+  float: left;
+}
+.drawingDiv:hover { background: linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
+  padding: 28px 28px;
+  animation: border-dance 4s infinite linear;
+  float: left;
+  }
+.animationDiv {
+position: -webkit-sticky;
+  position: sticky;
+  top: 200px; left:20px;
+  width: 150px;
+  height: 120px;
+  text-align: center;
+  background: linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%), linear-gradient(0deg, white 50%, transparent 50%);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
+  padding: 28px 28px;
+  animation: border-dance 4s infinite linear;
+  float: left;
+}
+.animationDiv:hover { background: linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(90deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%), linear-gradient(0deg, black 50%, transparent 50%);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
+  padding: 28px 28px;
+  animation: border-dance 4s infinite linear;
+  float: left;
+  }
+@keyframes border-dance {
+  0% {
+    background-position: 0 0, 100% 100%, 0 100%, 100% 0;
+  }
+  100% {
+    background-position: 100% 0, 0 100%, 0 0, 100% 100%;
+  }
+}
+.videoDiv {
+position: relative;
+bottom: -100px;
+right: -350px;
+}
+.reeltextDiv {
+position: relative;
+bottom: -100px;
+text-align: center;
+}
+</style>
+</head>
+<body style="background-color:white;">
+
+<title>JOHN IRVING</title>
+<div class="firstDiv">
+	<a href="http://john-irving.net">John Irving</a>
+</div>
+<div class="drawingDiv">
+	<a href="http://john-irving.net/Drawings_2018_Present">Drawings 2018-Present</a>
+</div>
+<div class="animationDiv">
+
+<div class="videoDiv">
+<iframe src="https://player.vimeo.com/video/433749342" width="960" height="540" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+</div>
+<div class="reeltextDiv">
+<p>2019 Animation Reel. Audio by <a href="https://decomposer.bandcamp.com/">Decomposer.</a></p>
+</div>
+</body>
+</html>
