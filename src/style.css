@@ -5,55 +5,103 @@ body {
   font-family: Consolas, Monaco, "Lucida Console", monospace;
   cursor: default;
   background-color: #f0f0f0;
+  /* Prevent scrollbars caused by fixed elements slightly overlapping */
+  overflow: hidden; 
 }
 
-/* --- Name Ticker Styles --- */
-#name-ticker-band {
-  position: fixed; /* Keep it fixed to the viewport top */
-  top: 0; 
-  left: 0; 
-  width: 100%;
-  background-color: #ffffff; 
-  color: #000000;
-  line-height: 1.3; 
-  padding: 0px 0; /* Vertical padding */
-  border-bottom: 1px solid #000000;
+/* --- Common Ticker Styles --- */
+.name-ticker-band {
+  position: fixed; 
+  background-color: #000; /* Black background */
+  color: #FFF; /* White text */
   font-family: Consolas, Monaco, "Lucida Console", monospace; 
   font-size: 0.9em;
-  /* MODIFIED: Revert to text-align center for single span */
-  text-align: center; 
   z-index: 950; 
   box-sizing: border-box;
   white-space: nowrap;
   overflow: hidden; 
-  /* REMOVED: Explicit min-height, height comes from content span */
-  /* min-height: calc(1.17em + 8px); */ 
+  display: flex; /* Use flex to help center/align content */
+  align-items: center; /* Vertical alignment for horizontal tickers */
+  justify-content: center; /* Horizontal alignment for vertical tickers */
 }
 
-/* Styles for the single text content span */
-/* Ensure an element with this ID exists in index.html */
-#ticker-text-content {
-  display: inline-block; /* Allows centering via text-align on parent */
-  /* Remove any animation properties if they existed */
-  /* animation: none; */ 
+.ticker-text-content {
+  display: inline-block; /* Allows centering/measurement */
+  line-height: 1.3; /* Base line height */
+  /* This class is used for the static spans in HTML */
+  /* Dynamically created spans will also get this class */
+}
+
+/* NEW: Styling for dynamically created spans (used by JS animation) */
+.dynamic-ticker-span {
+  position: absolute; /* Position controlled by JS */
+  /* Inherit font styles from parent .name-ticker-band */
+  /* Specific positioning (top/left/transform) set by JS */
+  white-space: nowrap;/* Prevent wrapping within a span */
+  line-height: 1.3; /* Match parent */
+  /* Ensure visibility */
+  display: block; /* Needed for vertical writing mode height */
 }
 
 
-/* REMOVED: .ticker-span rule as it's no longer needed */
-/* .ticker-span { ... } */
+/* --- Individual Ticker Positioning & Dimensions --- */
+#name-ticker-band-top {
+  top: 0; 
+  left: 0; 
+  width: 100%;
+  /* Height will be determined by content + padding */
+  padding: 4px 0; 
+  justify-content: center; /* Center the text span horizontally if needed (JS aligns spans left) */
+}
 
-/* --- End Ticker Styles --- */
+#name-ticker-band-right {
+  top: 0;
+  right: 0;
+  height: 100%; 
+  /* Width will be determined by content + padding */
+  padding: 0 4px; 
+  /* Vertical text styling handled by JS on dynamic spans */
+  /* writing-mode: vertical-rl; */ /* Applied by JS to spans */
+  /* text-orientation: mixed; */ /* Applied by JS to spans */
+}
 
+
+#name-ticker-band-bottom {
+  bottom: 0; 
+  left: 0; 
+  width: 100%;
+  /* Height will be determined by content + padding */
+  padding: 4px 0; 
+  justify-content: center; /* Center the text span horizontally if needed (JS aligns spans left) */
+}
+
+#name-ticker-band-left {
+  top: 0;
+  left: 0;
+  height: 100%;
+  /* Width will be determined by content + padding */
+  padding: 0 4px; 
+  /* Vertical text styling handled by JS on dynamic spans */
+  /* writing-mode: vertical-rl; */ /* Applied by JS to spans */
+  /* text-orientation: mixed; */ /* Applied by JS to spans */
+}
 
 /* --- Image Layout Container --- */
 #image-grid-background {
-  /* padding-top will be set by JavaScript */
+  /* Padding will be set by JavaScript on all four sides */
   width: 100%;
+  height: 100vh; /* Make it viewport height */
   box-sizing: border-box;
-  padding: 10px; /* Left/right/bottom padding */
+  /* Base padding (can be small, JS will override) */
+  padding: 10px; 
   column-width: 400px;
   column-gap: 10px;
   z-index: 1;
+  overflow-y: auto; /* Allow scrolling ONLY within the grid */
+  /* Ensure it doesn't cause body scrollbars */
+  position: absolute; 
+  top: 0;
+  left: 0;
 }
 
 /* --- Styles for Images within Columns --- */
@@ -76,6 +124,7 @@ body {
 
 
 /* --- Detail Modal Styles --- */
+/* Keep as is */
 #modal-container { z-index: 1000; display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 0px; border: 2px solid #000000; border-radius: 0px; font-family: inherit; box-shadow: none; max-width: 80vw; max-height: 80vh; }
 #modal-header { padding: 8px 15px; background-color: white; cursor: grab; user-select: none; -webkit-user-select: none; -ms-user-select: none; overflow: hidden; border-bottom: 1px solid #000000; width: 100%; box-sizing: border-box; }
 #modal-close-btn { float: right; font-size: 1.8em; color: #000000; cursor: pointer; line-height: 0.8; margin-left: 10px; }
@@ -110,10 +159,11 @@ body {
 
 
 /* --- Project List Modal Styles --- */
+/* Position relative to bottom-left of viewport (adjusted by JS) */
 #project-list-modal-container {
   display: flex; flex-direction: column; position: fixed;
-  /* top set by JS */ left: 10px; /* Adjusted */
-  transform: none; width: 250px; height: auto; max-height: 70vh;
+  /* left and bottom set by JS */
+  transform: none; width: 250px; height: auto; max-height: 70vh; /* Keep max-height */
   background-color: white; border: 2px solid #000000; border-radius: 0px;
   font-family: inherit; z-index: 990;
 }
@@ -126,9 +176,11 @@ body {
 /* --- End Project List Modal Styles --- */
 
 /* --- Tooltip Styles --- */
+/* Keep as is */
 #tooltip { position: absolute; display: none; padding: 5px 10px; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); border:1px solid black; border-radius: 1px; font-family: "Lucida Console", monospace; font-size: 12px; white-space: nowrap; pointer-events: none; z-index: 1001; }
 
 /* --- Lightbox Styles --- */
+/* Keep as is */
 #lightbox-overlay { z-index: 1010; display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.85); cursor: pointer; padding: 30px; box-sizing: border-box; display: flex; justify-content: center; align-items: center; }
 #lightbox-image { display: block; max-width: 90%; max-height: 90%; object-fit: contain; cursor: default; }
 #lightbox-close { z-index: 1011; position: absolute; top: 15px; right: 25px; font-size: 2.5em; color: #fff; cursor: pointer; line-height: 1; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
