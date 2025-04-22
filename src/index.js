@@ -1,10 +1,10 @@
 // src/index.js
 // Main application file for the portfolio.
 // Displays a masonry-like column layout of randomly ordered images via CSS.
-// Adds dynamic name tickers on all four edges using JS DOM manipulation (Counter-Clockwise Crawl).
+// Dynamically populates a static name ticker based on screen width using JS.
 // Clicking grid images attempts to open the corresponding project modal.
 // Handles modal display and lightbox functionality (modal images only).
-// VERSION: CSS Columns Background + Four JS DOM Tickers (Crawl) + Random Grid Order
+// VERSION: CSS Columns Background + Static JS Ticker Population + Random Grid Order
 
 import './style.css'; // Import CSS
 import { PROJECTS } from './constants.js';
@@ -12,10 +12,10 @@ import { PROJECTS } from './constants.js';
 // --- Image List for Background Grid ---
 const allImagePaths = [ /* Ensure your full list is here */
   'images/Beak1.jpg', 'images/beak2.jpg', 'images/cecile b evans1.gif', 'images/cecile b evans2.png',
-  'images/cecile b evans3.gif', 'images/elena velez1.png', 'images/elena velez2.gif', 'images/elena velez3.gif',
+  'images/cecile b evans3.gif', 'images/cecile b evans4.png', 'images/elena velez1.png', 'images/elena velez2.gif', 'images/elena velez3.gif',
   'images/elena velez4.gif', 'images/futureperfect1.png', 'images/futureperfect2.png', 'images/futureperfect3.png',
   'images/hammy1.gif', 'images/lakings1.png', 'images/lakings2.png', 'images/lakings3.gif',
-  'images/maiden home1.jpg', 'images/maiden home2.jpg', 'images/maiden home3.jpg', 'images/maiden home4.jpg',
+  'images/ecommerce1.jpg', 'images/ecommerce2.jpg', 'images/ecommerce3.jpg', 'images/ecommerce4.jpg',
   'images/me1.jpg', 'images/me3.png', 'images/me5.png',
   'images/megan1.png', 'images/megan2.jpg', 'images/megan3.png', 'images/miu miu1.png', 'images/miu miu2.gif',
   'images/miu miu3.gif', 'images/miu miu4.webp', 'images/miu miu5.webp', 'images/moncler1.jpg', 'images/moncler2.jpg',
@@ -28,29 +28,18 @@ const allImagePaths = [ /* Ensure your full list is here */
 let modalContainerElement = null, modalContentElement = null, modalCloseBtnElement = null, modalHeaderElement = null;
 let projectListContainerElement = null, projectListHeaderElement = null, projectListContentElement = null;
 let lightboxOverlay = null, lightboxImage = null, lightboxClose = null;
-let imageContainer = null; // Reference for main content area
 let isDragging = false;
 let currentLightboxImages = [];
 let currentLightboxIndex = 0;
 let currentlyDisplayedProjectIndex = -1;
 
 // --- Ticker Variables ---
-const nameUnit = "JOHN IRVING\u00A0\u00A0\u00A0"; // Text unit with non-breaking spaces
-const tickerSpeed = 50; // Speed in pixels per second
-let tickerAnimationId = null; // To store requestAnimationFrame ID
-let lastTimestamp = 0;
-
-// Structure to hold data for each ticker
-const tickers = {
-    // Moves Left: direction -1
-    top: { bandElement: null, textElement: null, spans: [], unitDimension: 0, containerDimension: 0, orientation: 'horizontal', direction: -1 }, 
-    // Moves Up: direction -1
-    left: { bandElement: null, textElement: null, spans: [], unitDimension: 0, containerDimension: 0, orientation: 'vertical', direction: -1 }, 
-    // Moves Right: direction 1
-    bottom: { bandElement: null, textElement: null, spans: [], unitDimension: 0, containerDimension: 0, orientation: 'horizontal', direction: 1 }, 
-    // Moves Down: direction 1
-    right: { bandElement: null, textElement: null, spans: [], unitDimension: 0, containerDimension: 0, orientation: 'vertical', direction: 1 } 
-};
+// REVERTED: Variables for JS DOM animation removed
+// let tickerSpans = []; 
+// let unitWidth = 0; 
+// let tickerAnimationId = null; 
+// const tickerSpeed = 50; 
+// const convergencePointX = 0; 
 
 // --- Helper function to shuffle an array in place (Fisher-Yates) ---
 function shuffleArray(array) {
@@ -62,247 +51,142 @@ function shuffleArray(array) {
 
 // --- Draggable Modal Functions ---
 // (Keep as is)
-function attachDragHandlers(headerElement, modalElement) { /* ... */ }
+function attachDragHandlers(headerElement, modalElement) {
+    if (!headerElement || !modalElement) { console.error("attachDragHandlers: Header or Modal element missing."); return; }
+    let specificDragOffsetX, specificDragOffsetY; let elementBeingDragged = null;
+    const onDragStart = (e) => { if (e.target.classList.contains('modal-close-btn') || e.target.id === 'modal-close-btn' || e.target.closest('#lightbox-overlay')) return; elementBeingDragged = modalElement; elementBeingDragged.style.cursor = 'grabbing'; try { elementBeingDragged.offsetHeight; } catch(e) {} const rect = elementBeingDragged.getBoundingClientRect(); specificDragOffsetX = e.clientX - rect.left; specificDragOffsetY = e.clientY - rect.top; const computedStyle = window.getComputedStyle(elementBeingDragged); elementBeingDragged.style.width = computedStyle.width; elementBeingDragged.style.height = computedStyle.height; elementBeingDragged.style.transform = 'none'; elementBeingDragged.style.left = `${rect.left}px`; elementBeingDragged.style.top = `${rect.top}px`; window.addEventListener('mousemove', specificOnDragMove); window.addEventListener('mouseup', specificOnDragEnd); e.preventDefault(); e.stopPropagation(); };
+    const specificOnDragMove = (e) => { if (!elementBeingDragged) return; const newX = e.clientX - specificDragOffsetX; const newY = e.clientY - specificDragOffsetY; elementBeingDragged.style.left = `${newX}px`; elementBeingDragged.style.top = `${newY}px`; };
+    const specificOnDragEnd = () => { if (!elementBeingDragged) return; elementBeingDragged.style.cursor = ''; elementBeingDragged = null; window.removeEventListener('mousemove', specificOnDragMove); window.removeEventListener('mouseup', specificOnDragEnd); };
+    headerElement.addEventListener('mousedown', onDragStart);
+}
 
 // --- Lightbox Functions ---
 // (Keep as is)
-function hideLightbox() { /* ... */ }
-function showLightboxImage(index) { /* ... */ }
-function navigateLightbox(direction) { /* ... */ }
-function handleLightboxKeys(event) { /* ... */ }
-function openLightbox(projectIndex, imageIndex, sourceType) { /* ... */ }
+function hideLightbox() {
+    if (lightboxOverlay) { lightboxOverlay.style.display = 'none'; lightboxImage.src = ''; }
+    currentLightboxImages = []; currentLightboxIndex = 0; console.log("Lightbox hidden");
+}
+function showLightboxImage(index) {
+    if (!lightboxOverlay || !lightboxImage) { console.error("Lightbox elements missing."); hideLightbox(); return; }
+    if (!currentLightboxImages || !Array.isArray(currentLightboxImages) || currentLightboxImages.length === 0) { console.error(`Lightbox: currentLightboxImages invalid or empty.`); hideLightbox(); return; }
+    currentLightboxIndex = Math.max(0, Math.min(currentLightboxImages.length - 1, index));
+    lightboxImage.src = currentLightboxImages[currentLightboxIndex];
+    console.log(`Showing lightbox image index: ${currentLightboxIndex}, src: ${lightboxImage.src}`);
+    lightboxOverlay.style.display = 'flex';
+}
+function navigateLightbox(direction) {
+     if (!currentLightboxImages || !Array.isArray(currentLightboxImages) || currentLightboxImages.length <= 1) return;
+    let newIndex = currentLightboxIndex + direction;
+    if (newIndex < 0) { newIndex = currentLightboxImages.length - 1; }
+    else if (newIndex >= currentLightboxImages.length) { newIndex = 0; }
+    showLightboxImage(newIndex);
+}
+function handleLightboxKeys(event) {
+    if (!lightboxOverlay || lightboxOverlay.style.display === 'none') return;
+    switch (event.key) {
+        case 'ArrowRight': case 'ArrowDown': navigateLightbox(1); break;
+        case 'ArrowLeft': case 'ArrowUp': navigateLightbox(-1); break;
+        case 'Escape': hideLightbox(); break;
+    }
+}
+function openLightbox(projectIndex, imageIndex, sourceType) {
+     if (projectIndex < 0 || projectIndex >= PROJECTS.length) { console.error("Lightbox: Invalid project index", projectIndex); return; }
+     const projectData = PROJECTS[projectIndex]; let sourceArray = null;
+     if (sourceType === 'centerpiece' && projectData.centerpieceImages?.length) { sourceArray = projectData.centerpieceImages; }
+     else if (sourceType === 'additional' && projectData.additionalImages?.length) { sourceArray = projectData.additionalImages; }
+     else { console.warn(`Lightbox: Invalid source type "${sourceType}" or missing data for project ${projectIndex}.`); return; }
+     if (sourceArray.length > 0) { console.log(`Opening lightbox for project ${projectIndex}, source ${sourceType}, index ${imageIndex}`); currentlyDisplayedProjectIndex = projectIndex; currentLightboxImages = [...sourceArray]; showLightboxImage(imageIndex); }
+     else { console.warn(`Lightbox: No images found in source "${sourceType}" for project ${projectIndex}.`); }
+}
 // --- END Lightbox Functions ---
 
 // --- Helper function to find project index for a given image src ---
 // (Keep as is)
-function findProjectIndexForImage(imageSrc) { /* ... */ }
+function findProjectIndexForImage(imageSrc) {
+    if (!imageSrc) return -1;
+    let clickedPathname;
+    try {
+        clickedPathname = decodeURIComponent(new URL(imageSrc, document.baseURI).pathname);
+    } catch (e) { console.error("[Lookup] Error parsing image SRC:", imageSrc, e); return -1; }
+    const relativeClickedPath = (clickedPathname.startsWith('/') ? clickedPathname.substring(1) : clickedPathname).toLowerCase();
 
-
-// --- NEW Ticker Initialization Logic ---
-function measureTickerUnitDimension(tickerData) {
-    if (!tickerData || !tickerData.bandElement) return 0;
-
-    const tempSpan = document.createElement('span');
-    tempSpan.style.visibility = 'hidden';
-    tempSpan.style.position = 'absolute';
-    tempSpan.style.whiteSpace = 'nowrap'; 
-    tempSpan.style.fontFamily = getComputedStyle(tickerData.bandElement).fontFamily;
-    tempSpan.style.fontSize = getComputedStyle(tickerData.bandElement).fontSize;
-    tempSpan.style.lineHeight = getComputedStyle(tickerData.bandElement).lineHeight;
-    tempSpan.style.padding = '0'; 
-    tempSpan.textContent = nameUnit;
-
-    if (tickerData.orientation === 'vertical') {
-        tempSpan.style.writingMode = 'vertical-rl'; 
-        tempSpan.style.textOrientation = 'mixed';
-        tempSpan.style.display = 'block'; 
-    }
-
-    document.body.appendChild(tempSpan); 
-    
-    let dimension = 0;
-    if (tickerData.orientation === 'horizontal') {
-        dimension = tempSpan.offsetWidth;
-    } else { // vertical
-        dimension = tempSpan.offsetHeight;
-    }
-
-    document.body.removeChild(tempSpan); 
-    // console.log(`Measured unit ${tickerData.orientation === 'horizontal' ? 'width' : 'height'} for ${tickerData.bandElement.id}: ${dimension}px`);
-    return dimension;
+    const projectIndex = PROJECTS.findIndex((project) => {
+         const normalize = (p) => p ? p.toLowerCase() : null;
+         let matchFound = false;
+         const imageUrl = normalize(project.imageUrl);
+         if (imageUrl) { if (imageUrl === relativeClickedPath) { matchFound = true; } }
+         const centerpieceImages = project.centerpieceImages?.map(normalize);
+         if (!matchFound && centerpieceImages) { matchFound = centerpieceImages.some(p => p === relativeClickedPath); }
+         const additionalImages = project.additionalImages?.map(normalize);
+         if (!matchFound && additionalImages) { matchFound = additionalImages.some(p => p === relativeClickedPath); }
+         return matchFound;
+    });
+    return projectIndex;
 }
 
-function initializeSingleTicker(tickerKey) {
-    const tickerData = tickers[tickerKey];
-    if (!tickerData || !tickerData.bandElement || !tickerData.textElement) {
-        console.error(`Ticker elements not found for key: ${tickerKey}`);
-        return;
-    }
 
-    tickerData.textElement.textContent = ''; 
-    tickerData.bandElement.querySelectorAll('.dynamic-ticker-span').forEach(span => span.remove());
-    tickerData.spans = []; 
+// --- REVERTED: Ticker Text Population (Single Span) ---
+function populateTickerText() {
+    const tickerBandElement = document.getElementById('name-ticker-band');
+    // IMPORTANT: Ensure your index.html has <span id="ticker-text-content"></span> inside #name-ticker-band
+    const tickerTextElement = document.getElementById('ticker-text-content'); 
 
-    tickerData.unitDimension = measureTickerUnitDimension(tickerData);
-    if (tickerData.unitDimension <= 0) {
-        console.error(`Could not measure ticker unit dimension for ${tickerKey}. Aborting init.`);
-        return;
-    }
+    if (tickerBandElement && tickerTextElement) {
+        const nameUnit = "JOHN IRVING\u00A0\u00A0\u00A0"; // Text unit with non-breaking spaces
+        let unitWidth = 0;
 
-    let numSpansNeeded;
-    if (tickerData.orientation === 'horizontal') {
-        tickerData.containerDimension = tickerData.bandElement.offsetWidth; 
-        numSpansNeeded = Math.ceil(tickerData.containerDimension / tickerData.unitDimension) + 2;
-    } else { // vertical
-        tickerData.containerDimension = tickerData.bandElement.offsetHeight; 
-        numSpansNeeded = Math.ceil(tickerData.containerDimension / tickerData.unitDimension) + 2;
-    }
-
-    // console.log(`${tickerKey} Ticker: Container Dim ${tickerData.containerDimension}, Unit Dim ${tickerData.unitDimension}, Spans Needed ${numSpansNeeded}`);
-
-    // Create and position the spans
-    for (let i = 0; i < numSpansNeeded; i++) {
-        const span = document.createElement('span');
-        span.className = 'ticker-text-content dynamic-ticker-span'; 
-        span.textContent = nameUnit;
-        span.style.position = 'absolute'; 
-        
-        let initialPos;
-        if (tickerData.orientation === 'horizontal') {
-            initialPos = i * tickerData.unitDimension;
-            span.style.top = '0'; 
-            span.style.left = '0'; 
-            span.style.transform = `translateX(${initialPos}px)`;
-        } else { // vertical
-            initialPos = i * tickerData.unitDimension;
-            span.style.left = '0'; 
-            span.style.top = '0'; 
-            span.style.transform = `translateY(${initialPos}px)`;
-            span.style.writingMode = 'vertical-rl';
-            span.style.textOrientation = 'mixed';
-            span.style.display = 'block'; 
-            span.style.width = 'auto'; 
-            span.style.height = `${tickerData.unitDimension}px`; 
-        }
-        
-        tickerData.bandElement.appendChild(span);
-        tickerData.spans.push({ element: span, pos: initialPos }); 
-    }
-}
-
-// --- Ticker Animation Loop (Handles all four crawls) ---
-function animateTickers(timestamp) {
-    if (!lastTimestamp) {
-        lastTimestamp = timestamp; 
-    }
-    const deltaTime = timestamp - lastTimestamp;
-    lastTimestamp = timestamp;
-    const movement = tickerSpeed * (deltaTime / 1000); 
-
-    // Loop through each ticker configuration
-    for (const key in tickers) {
-        const tickerData = tickers[key];
-        if (!tickerData || tickerData.unitDimension <= 0 || tickerData.spans.length === 0) {
-            continue; 
-        }
-
-        let primaryAxisMostNegativeSpanIndex = -1; // Index of span furthest left/top
-        let primaryAxisMostPositiveSpanIndex = -1; // Index of span furthest right/bottom
-        let primaryAxisMostNegativePos = Infinity;
-        let primaryAxisMostPositivePos = -Infinity;
-
-        // Update positions and find boundaries
-        for (let i = 0; i < tickerData.spans.length; i++) {
-            const spanData = tickerData.spans[i];
-            
-            // Always move in the specified direction
-            spanData.pos += movement * tickerData.direction; 
-            
-            // Apply transform based on orientation
-            const transformValue = tickerData.orientation === 'horizontal' ? `translateX(${spanData.pos}px)` : `translateY(${spanData.pos}px)`;
-            spanData.element.style.transform = transformValue;
-
-            // Track boundaries
-            if (spanData.pos < primaryAxisMostNegativePos) {
-                primaryAxisMostNegativePos = spanData.pos;
-                primaryAxisMostNegativeSpanIndex = i;
-            }
-            if (spanData.pos > primaryAxisMostPositivePos) {
-                primaryAxisMostPositivePos = spanData.pos;
-                primaryAxisMostPositiveSpanIndex = i;
+        // Measure width accurately using a temporary element
+        const tempSpan = document.createElement('span');
+        try {
+            tempSpan.style.visibility = 'hidden';
+            tempSpan.style.position = 'absolute';
+            tempSpan.style.whiteSpace = 'nowrap';
+            // Apply relevant styles from the actual ticker for accurate measurement
+            const tickerStyle = window.getComputedStyle(tickerBandElement); // Get style from band
+            const textStyle = window.getComputedStyle(tickerTextElement); // Get style from text span itself
+            tempSpan.style.fontFamily = textStyle.fontFamily || tickerStyle.fontFamily;
+            tempSpan.style.fontSize = textStyle.fontSize || tickerStyle.fontSize;
+             // Use a default letter spacing for measurement if CSS animation was changing it
+            tempSpan.style.letterSpacing = textStyle.letterSpacing || '1px'; // Use current or default
+            tempSpan.textContent = nameUnit;
+            document.body.appendChild(tempSpan);
+            unitWidth = tempSpan.offsetWidth;
+        } catch (e) {
+            console.error("Error measuring text width:", e);
+        } finally {
+            // Ensure cleanup even if error occurs
+            if (tempSpan.parentNode === document.body) {
+                document.body.removeChild(tempSpan);
             }
         }
 
-        // --- Seamless Looping Logic ---
-        // Check if a span needs recycling and calculate its new position
-        let spanToMoveIndex = -1;
-        let newPos = 0;
+        if (unitWidth > 0) {
+            const screenWidth = window.innerWidth;
+            // Calculate repeats needed just to fill the screen width + a buffer
+            // Add +2 buffer: 1 to ensure full coverage, 1 extra just in case
+            const repeatsNeeded = Math.ceil(screenWidth / unitWidth) + 2; 
+            const fullTextSegment = nameUnit.repeat(repeatsNeeded);
 
-        if (tickerData.direction === -1) { // Moving Left or Up
-            // Recycle the span that has moved furthest left/top (most negative position)
-            // if its *leading* edge (pos) is past the recycling point (-unitDimension)
-            if (primaryAxisMostNegativeSpanIndex !== -1 && primaryAxisMostNegativePos <= -tickerData.unitDimension) {
-                spanToMoveIndex = primaryAxisMostNegativeSpanIndex;
-                // Place it immediately after the span furthest right/bottom
-                newPos = primaryAxisMostPositivePos + tickerData.unitDimension;
+            // Check if text content needs updating to avoid unnecessary DOM manipulation
+            if (tickerTextElement.textContent !== fullTextSegment) {
+                 tickerTextElement.textContent = fullTextSegment; // Set text on single span
+                 console.log(`Ticker Text Updated: Unit width ${unitWidth}px, needed ${repeatsNeeded} repeats.`);
             }
-        } else { // Moving Right or Down (direction === 1)
-            // Recycle the span that has moved furthest right/bottom (most positive position)
-            // if its *trailing* edge (pos) is past the container dimension
-            if (primaryAxisMostPositiveSpanIndex !== -1 && primaryAxisMostPositivePos >= tickerData.containerDimension) {
-                 spanToMoveIndex = primaryAxisMostPositiveSpanIndex;
-                 // Place it immediately before the span furthest left/top
-                 newPos = primaryAxisMostNegativePos - tickerData.unitDimension;
+        } else {
+            console.error("Ticker Text: Could not calculate unit width. Using fallback.");
+            // Avoid setting fallback repeatedly if width calculation fails consistently
+            if (!tickerTextElement.textContent.startsWith(nameUnit)) {
+                 tickerTextElement.textContent = (nameUnit).repeat(30); // Arbitrary fallback
             }
         }
-
-        // Apply the recycling repositioning if needed
-        if (spanToMoveIndex !== -1) {
-            const spanToMove = tickerData.spans[spanToMoveIndex];
-            spanToMove.pos = newPos;
-            const transformValue = tickerData.orientation === 'horizontal' ? `translateX(${newPos}px)` : `translateY(${newPos}px)`;
-            spanToMove.element.style.transform = transformValue;
-            // console.log(`Recycling span ${spanToMoveIndex} for ${key} to position ${newPos}`);
-        }
-
-    } // End loop through tickers
-
-    // Continue the loop
-    tickerAnimationId = requestAnimationFrame(animateTickers);
-}
-
-function startTickerAnimation() {
-    if (tickerAnimationId) {
-        cancelAnimationFrame(tickerAnimationId); 
-    }
-    lastTimestamp = 0; 
-    tickerAnimationId = requestAnimationFrame(animateTickers);
-    console.log("Ticker animation started.");
-}
-
-function stopTickerAnimation() {
-    if (tickerAnimationId) {
-        cancelAnimationFrame(tickerAnimationId);
-        tickerAnimationId = null;
-        console.log("Ticker animation stopped.");
-    }
-}
-
-// --- Adjust Layout for Four Tickers ---
-// (Keep as is)
-function adjustLayout() {
-    let topTickerHeight = 0;
-    let rightTickerWidth = 0;
-    let bottomTickerHeight = 0;
-    let leftTickerWidth = 0;
-
-    if (tickers.top.bandElement) topTickerHeight = tickers.top.bandElement.offsetHeight;
-    if (tickers.right.bandElement) rightTickerWidth = tickers.right.bandElement.offsetWidth;
-    if (tickers.bottom.bandElement) bottomTickerHeight = tickers.bottom.bandElement.offsetHeight;
-    if (tickers.left.bandElement) leftTickerWidth = tickers.left.bandElement.offsetWidth;
-
-    if (imageContainer) {
-        const desiredGap = 10; // Optional gap between ticker and content
-        imageContainer.style.paddingTop = `${topTickerHeight + desiredGap}px`;
-        imageContainer.style.paddingRight = `${rightTickerWidth + desiredGap}px`;
-        imageContainer.style.paddingBottom = `${bottomTickerHeight + desiredGap}px`;
-        imageContainer.style.paddingLeft = `${leftTickerWidth + desiredGap}px`;
-        // console.log(`Layout adjusted: T${topTickerHeight}, R${rightTickerWidth}, B${bottomTickerHeight}, L${leftTickerWidth}`);
     } else {
-        console.warn("Image container not found for layout adjustments.");
-    }
-
-    if (projectListContainerElement) {
-        const listGap = 10; 
-        projectListContainerElement.style.left = `${leftTickerWidth + listGap}px`;
-        projectListContainerElement.style.bottom = `${bottomTickerHeight + listGap}px`;
-        projectListContainerElement.style.removeProperty('top'); 
+        console.warn("Ticker elements (#name-ticker-band, #ticker-text-content) not found for dynamic population.");
     }
 }
+// --- End Ticker Text Population ---
 
 
 // --- Initialization and Event Listeners ---
-// (Keep as is)
 window.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Loaded - Getting elements...');
     // Get all needed elements
@@ -316,63 +200,113 @@ window.addEventListener('DOMContentLoaded', () => {
     lightboxOverlay = document.getElementById('lightbox-overlay');
     lightboxImage = document.getElementById('lightbox-image');
     lightboxClose = document.getElementById('lightbox-close');
-    imageContainer = document.getElementById('image-grid-background'); 
+    const imageContainer = document.getElementById('image-grid-background');
+    const tickerBandElement = document.getElementById('name-ticker-band'); // Keep ref for layout adjust
 
-    // Get ticker elements
-    tickers.top.bandElement = document.getElementById('name-ticker-band-top');
-    tickers.top.textElement = document.getElementById('ticker-text-content-top');
-    tickers.right.bandElement = document.getElementById('name-ticker-band-right');
-    tickers.right.textElement = document.getElementById('ticker-text-content-right');
-    tickers.bottom.bandElement = document.getElementById('name-ticker-band-bottom');
-    tickers.bottom.textElement = document.getElementById('ticker-text-content-bottom');
-    tickers.left.bandElement = document.getElementById('name-ticker-band-left');
-    tickers.left.textElement = document.getElementById('ticker-text-content-left');
+    // --- REVERTED: Call static ticker population ---
+    populateTickerText();
 
-
-    // --- Initialize All Tickers ---
-    for (const key in tickers) {
-        initializeSingleTicker(key);
-    }
-    if (Object.values(tickers).some(t => t.spans.length > 0)) {
-         startTickerAnimation();
-    }
-    // --- End Ticker Init ---
-
-
-    // --- Initial Layout Adjustment ---
-    setTimeout(adjustLayout, 150); 
-
-    // --- Add Resize Listener ---
+    // --- REVERTED: Add resize listener for static ticker ---
     let resizeTimer;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-            console.log("Window resized, re-initializing tickers and adjusting layout...");
-            stopTickerAnimation(); 
-            for (const key in tickers) {
-                initializeSingleTicker(key);
-            }
-            adjustLayout();
-            if (Object.values(tickers).some(t => t.spans.length > 0)) {
-                 startTickerAnimation();
-            }
-        }, 250); 
+            console.log("Window resized, repopulating static ticker text...");
+            populateTickerText(); // Repopulate single span text
+             // Also potentially readjust layout if needed after resize
+             if (tickerBandElement) adjustLayout(tickerBandElement, imageContainer, projectListContainerElement);
+        }, 250); // Debounce timer
     });
-    // --- End Resize Listener ---
+    // --- End Ticker Setup ---
+
+
+    // --- Adjust Layout Below Fixed Ticker ---
+    // Encapsulate in a function to call on load and potentially resize
+    const adjustLayout = (tickerBand, imgContainer, listContainer) => {
+         if (tickerBand) {
+            const tickerHeight = tickerBand.offsetHeight;
+            if (tickerHeight > 0) {
+                const desiredGap = 10;
+                if (imgContainer) { imgContainer.style.paddingTop = `${tickerHeight + desiredGap}px`; /* console.log(`Set padding-top for image container: ${tickerHeight + desiredGap}px`); */ }
+                 else { console.warn("Image container not found for padding adjustment."); }
+                if (listContainer) { listContainer.style.top = `${tickerHeight + desiredGap}px`; /* console.log(`Set top for project list modal: ${tickerHeight + desiredGap}px`); */ }
+                 else { console.warn("Project list container not found for top adjustment."); }
+            } else { console.warn("Ticker band height is 0, layout not adjusted."); }
+         } else { console.warn("Ticker band not found for layout adjustments."); }
+    };
+
+    // Initial layout adjustment
+    setTimeout(() => adjustLayout(tickerBandElement, imageContainer, projectListContainerElement), 150); 
+    // --- End Layout Adjustment ---
 
 
     // --- Populate Image Container for CSS Columns ---
     // (Keep as is)
-    if (imageContainer) { /* ... */ } else { console.error("Image container '#image-grid-background' not found!"); }
+    if (imageContainer) {
+        if (allImagePaths.length === 0) {
+             console.warn("The 'allImagePaths' array is empty!");
+             imageContainer.innerHTML = '<p style="text-align: center; padding: 20px;">No images found.</p>';
+        } else {
+            console.log("Shuffling image paths...");
+            shuffleArray(allImagePaths); 
+            allImagePaths.forEach((imgPath, index) => {
+                const img = document.createElement('img');
+                img.src = imgPath;
+                const fileName = imgPath.substring(imgPath.lastIndexOf('/') + 1);
+                img.alt = `Portfolio image: ${fileName}`;
+                img.loading = 'lazy';
+                img.dataset.index = index; 
+                imageContainer.appendChild(img);
+            });
+             console.log(`Appended ${allImagePaths.length} images in random order.`);
+            imageContainer.addEventListener('click', (event) => {
+                if (event.target.tagName === 'IMG' && event.target.src) {
+                    const clickedImageSrc = event.target.src;
+                    console.log("--- Grid Image Clicked ---");
+                    const projectIndex = findProjectIndexForImage(clickedImageSrc);
+                    if (projectIndex !== -1) {
+                        console.log(`>>> Action: Opening modal for project index ${projectIndex}.`);
+                        openOrUpdateDetailModal(projectIndex);
+                        event.stopPropagation(); 
+                    } else {
+                        console.log(">>> Action: No project found for this image.");
+                    }
+                    console.log("--- End Grid Image Click ---");
+                }
+            });
+        }
+    } else { console.error("Image container '#image-grid-background' not found!"); }
     // --- End Image Population ---
 
     // --- Modal Setup --- 
     // (Keep as is)
-     if (modalContainerElement) { /* ... */ } else { console.warn("Detail modal container not found."); }
-     if (projectListContainerElement) { /* ... */ } else { console.error("Project List Container Element NOT FOUND!"); }
-     if (modalContainerElement && modalContentElement && modalCloseBtnElement) { /* ... */ } else { console.warn("Detail modal elements not found! Cannot attach listeners.");}
-     if (projectListContainerElement && projectListHeaderElement && projectListContentElement) { /* ... */ } else { console.warn("Skipping list modal setup - elements not found."); }
-     if (lightboxOverlay && lightboxImage && lightboxClose) { /* ... */ } else { console.error("Lightbox elements not found! Cannot attach listeners."); }
+     if (modalContainerElement) { modalContainerElement.style.display = 'none'; }
+     else { console.warn("Detail modal container not found."); }
+    console.log('List Modal Container Ref on Load:', projectListContainerElement);
+    if (projectListContainerElement) {
+        try {
+             projectListContainerElement.style.display = 'flex';
+             projectListContainerElement.style.position = 'fixed';
+             projectListContainerElement.style.transform = 'none';
+             projectListContainerElement.style.visibility = 'visible';
+             projectListContainerElement.style.opacity = '1';
+             projectListContainerElement.style.width = '250px';
+         } catch(e) { console.error("Error setting initial list modal styles:", e); }
+    } else { console.error("Project List Container Element NOT FOUND!"); }
+    if (modalContainerElement && modalContentElement && modalCloseBtnElement) {
+        modalCloseBtnElement.addEventListener('click', () => { if (modalContainerElement) { modalContainerElement.style.display = 'none'; } });
+        if(modalHeaderElement) { attachDragHandlers(modalHeaderElement, modalContainerElement); } else { console.warn("Detail modal header not!");}
+        modalContentElement.addEventListener('click', (event) => {
+            let imageIndex = -1; let sourceType = null; const imageItemWrapper = event.target.closest('.additional-image-item'); if (imageItemWrapper) { const imgElement = imageItemWrapper.querySelector('img'); if (imgElement?.dataset.index !== undefined) { imageIndex = parseInt(imgElement.dataset.index, 10); sourceType = 'additional'; } } if (sourceType === null) { const centerpieceImgElement = event.target.closest('.centerpiece-images-container img.lightbox-trigger'); if (centerpieceImgElement?.dataset.index !== undefined) { imageIndex = parseInt(centerpieceImgElement.dataset.index, 10); sourceType = 'centerpiece'; } } if (sourceType !== null && !isNaN(imageIndex) && currentlyDisplayedProjectIndex !== -1) { openLightbox(currentlyDisplayedProjectIndex, imageIndex, sourceType); } else if (sourceType !== null) { console.warn("Lightbox click (modal): Could not parse image index."); }
+        });
+    } else { console.warn("Detail modal elements not found! Cannot attach listeners.");}
+    if (projectListContainerElement && projectListHeaderElement && projectListContentElement) {
+        console.log('Populating and attaching handlers to list modal...'); populateProjectList(); attachDragHandlers(projectListHeaderElement, projectListContainerElement); projectListContentElement.addEventListener('click', (event) => { const link = event.target.closest('a.project-list-link'); if (link?.dataset.index) { event.preventDefault(); const projectIndex = parseInt(link.dataset.index, 10); if (!isNaN(projectIndex)) { openOrUpdateDetailModal(projectIndex); } } });
+    } else { console.warn("Skipping list modal setup - elements not found."); }
+    if (lightboxOverlay && lightboxImage && lightboxClose) {
+        lightboxClose.addEventListener('click', (event) => { hideLightbox(); event.stopPropagation(); });
+        lightboxOverlay.addEventListener('click', (event) => { if (event.target === lightboxOverlay) { hideLightbox(); event.stopPropagation(); } });
+    } else { console.error("Lightbox elements not found! Cannot attach listeners."); }
      window.addEventListener('keydown', handleLightboxKeys);
     console.log('DOM setup complete.');
 
@@ -380,13 +314,27 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // --- Project List Population --- 
 // (Keep as is)
-function populateProjectList() { /* ... */ }
+function populateProjectList() {
+    if (!projectListContentElement || !PROJECTS) return;
+    let listHtml = '<ul>'; PROJECTS.forEach((project, index) => { listHtml += `<li><a href="#" class="project-list-link" data-index="${index}">${project.title}</a></li>`; }); listHtml += '</ul>'; projectListContentElement.innerHTML = listHtml;
+}
 
 // --- Detail Modal Logic --- 
 // (Keep as is)
-function openOrUpdateDetailModal(projectIndex) { /* ... */ }
+function openOrUpdateDetailModal(projectIndex) {
+    if (!modalContainerElement || !modalContentElement) { console.error("Detail modal elements missing."); return; } if (projectIndex !== undefined && projectIndex >= 0 && projectIndex < PROJECTS.length) { currentlyDisplayedProjectIndex = projectIndex; const projectData = PROJECTS[projectIndex]; modalContentElement.innerHTML = `<h2>${projectData.title}</h2> ${projectData.subtitle ? `<p class="modal-subtitle">${projectData.subtitle}</p>` : ''} ${projectData.imageUrl ? `<div class="modal-image-container"><img src="${projectData.imageUrl}" alt="${projectData.title} preview"></div>` : ''} ${projectData.youtubeEmbedUrl ? `<div class="video-wrapper"><iframe src="${projectData.youtubeEmbedUrl}" title="Video for ${projectData.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>` : ''} ${projectData.localVideoPath ? `<div class="video-wrapper"><video controls preload="metadata"><source src="${projectData.localVideoPath}" type="video/mp4">Your browser does not support the video tag.</video></div>` : ''} ${projectData.centerpieceImages?.length ? `<div class="centerpiece-images-container">${projectData.centerpieceImages.map((imgUrl, imageIndex) => `<img src="${imgUrl}" alt="${projectData.title} centerpiece image ${imageIndex + 1}" class="lightbox-trigger" data-index="${imageIndex}">`).join('')}</div>` : ''} ${projectData.additionalImages?.length ? `<div class="additional-images-container">${projectData.additionalImages.map((imgUrl, originalIndex) => `<div class="additional-image-item"><img src="${imgUrl}" alt="Project detail image thumbnail" data-index="${originalIndex}"></div>`).slice(0, 3).join('')}</div>` : ''} ${projectData.description ? `${projectData.description}` : ''} ${projectData.details?.length ? `<table class="details-table"><tbody>${projectData.details.map(detail => `<tr><th>${detail.label}:</th><td>${detail.value}</td></tr>`).join('')}</tbody></table>` : ''} ${projectData.technologies?.length ? `<div class="modal-tech"><strong>Technologies:</strong><ul>${projectData.technologies.map(tech => `<li>${tech}</li>`).join('')}</ul></div>` : ''} ${projectData.url && projectData.url !== '#' ? `<p class="modal-link"><strong>Link:</strong> <a href="${projectData.url}" target="_blank" rel="noopener noreferrer">View Project</a></p>` : ''} `; modalContainerElement.style.width = ''; modalContainerElement.style.height = ''; modalContainerElement.style.top = '50%'; modalContainerElement.style.left = '50%'; modalContainerElement.style.transform = 'translate(-50%, -50%)'; modalContentElement.scrollTop = 0; modalContainerElement.style.display = 'block'; } else { console.warn("Invalid projectIndex for detail modal:", projectIndex); currentlyDisplayedProjectIndex = -1; }
+}
+
+//TEST
 
 // --- Background Click Logic --- 
 // (Keep as is)
-document.addEventListener('click', (event) => { /* ... */ });
-
+document.addEventListener('click', (event) => {
+    if (!event.target.closest('#modal-container') && !event.target.closest('#project-list-modal-container')) {
+        if (lightboxOverlay && lightboxOverlay.style.display !== 'none' && event.target.closest('#lightbox-overlay')) { return; }
+        if (modalContainerElement && modalContainerElement.style.display !== 'none') {
+           console.log("Background click detected, closing detail modal.");
+           modalContainerElement.style.display = 'none';
+        }
+    }
+});
