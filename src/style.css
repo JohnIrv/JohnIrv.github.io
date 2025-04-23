@@ -10,24 +10,24 @@ body {
 /* --- Name Ticker Styles --- */
 #name-ticker-band {
   position: fixed; /* Keep it fixed to the viewport top */
-  top: 0; 
-  left: 0; 
+  top: 0;
+  left: 0;
   width: 100%;
-  background-color: #ffffff; 
+  background-color: #ffffff;
   color: #000000;
-  line-height: 1.3; 
+  line-height: 1.3;
   padding: 0px 0; /* Vertical padding */
   border-bottom: 1px solid #000000;
-  font-family: Consolas, Monaco, "Lucida Console", monospace; 
+  font-family: Consolas, Monaco, "Lucida Console", monospace;
   font-size: 0.9em;
   /* MODIFIED: Revert to text-align center for single span */
-  text-align: center; 
-  z-index: 950; 
+  text-align: center;
+  z-index: 950;
   box-sizing: border-box;
   white-space: nowrap;
-  overflow: hidden; 
+  overflow: hidden;
   /* REMOVED: Explicit min-height, height comes from content span */
-  /* min-height: calc(1.17em + 8px); */ 
+  /* min-height: calc(1.17em + 8px); */
 }
 
 /* Styles for the single text content span */
@@ -35,7 +35,7 @@ body {
 #ticker-text-content {
   display: inline-block; /* Allows centering via text-align on parent */
   /* Remove any animation properties if they existed */
-  /* animation: none; */ 
+  /* animation: none; */
 }
 
 
@@ -112,17 +112,62 @@ body {
 /* --- Project List Modal Styles --- */
 #project-list-modal-container {
   display: flex; flex-direction: column; position: fixed;
-  /* top set by JS */ left: 10px; /* Adjusted */
-  transform: none; width: 250px; height: auto; max-height: 70vh;
+  /* MODIFICATION START: Changed positioning */
+  top: auto;          /* Set top to auto */
+  bottom: 10px;       /* Position 10px from the bottom */
+  left: 10px;         /* Position 10px from the left */
+  /* MODIFICATION END */
+  transform: none; width: 250px; height: auto; max-height: 70vh; /* Max height applies when expanded */
   background-color: white; border: 2px solid #000000; border-radius: 0px;
   font-family: inherit; z-index: 990;
+  transition: max-height 0.3s ease; /* Add transition for smooth collapse/expand */
 }
-#project-list-header { padding: 8px 10px; background-color: #ffffff; color: #333; font-size: 0.9em; font-weight: bold; cursor: grab; border-bottom: 1px solid #000000; user-select: none; -webkit-user-select: none; -ms-user-select: none; flex-shrink: 0; }
+#project-list-header {
+    padding: 8px 10px; background-color: #ffffff; color: #333;
+    font-size: 0.9em; font-weight: bold; cursor: grab;
+    border-bottom: 1px solid #000000; user-select: none;
+    -webkit-user-select: none; -ms-user-select: none; flex-shrink: 0;
+    /* Make space for the button */
+    position: relative; /* Needed for absolute positioning or for float containment */
+    overflow: hidden; /* Contain floats */
+}
+
+/* --- ADDED Styles for Minimize Button --- */
+#project-list-minimize-btn {
+    float: right;
+    cursor: pointer;
+    font-size: 1.4em; /* Adjust size as needed */
+    line-height: 0.9; /* Adjust vertical alignment */
+    margin-left: 8px;
+    padding: 0 3px;
+    color: #555;
+    font-weight: bold;
+}
+#project-list-minimize-btn:hover {
+    color: #000;
+}
+/* --- End Minimize Button Styles --- */
+
 #project-list-content { padding: 10px; overflow-y: auto; flex-grow: 1; min-height: 0; }
 #project-list-content ul { list-style: none; padding: 0; margin: 0; }
 #project-list-content li { margin-bottom: 5px; font-size: 0.85em; }
 #project-list-content li a.project-list-link { display: block; text-decoration: none; color: inherit; padding: 3px 5px; margin: -3px -5px; border-radius: 2px; cursor: pointer; }
 #project-list-content li a.project-list-link:hover { background-color: #eee; cursor: pointer; }
+
+/* --- ADDED Styles for Minimized State --- */
+#project-list-modal-container.minimized {
+    height: auto; /* Let height shrink to content */
+    max-height: none; /* Override max-height when minimized */
+}
+#project-list-modal-container.minimized #project-list-content {
+    display: none; /* Hide the content area */
+}
+/* Ensure border looks right when minimized */
+#project-list-modal-container.minimized #project-list-header {
+    border-bottom: none; /* Remove border between header and hidden content */
+}
+/* --- End Minimized State Styles --- */
+
 /* --- End Project List Modal Styles --- */
 
 /* --- Tooltip Styles --- */
