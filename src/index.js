@@ -5,7 +5,7 @@
 // Clicking grid images attempts to open the corresponding project modal.
 // Handles modal display and lightbox functionality (modal images only).
 // Handles minimizing/maximizing the project list modal.
-// VERSION: CSS Columns Background + Static JS Ticker Population + Random Grid Order + List Modal Bottom Left + List Modal Minimize
+// VERSION: CSS Columns Background + Static JS Ticker Population + Random Grid Order + List Modal Bottom Left + List Modal Minimize + Drag Fix
 
 import './style.css'; // Import CSS
 import { PROJECTS } from './constants.js';
@@ -45,19 +45,79 @@ function shuffleArray(array) {
     }
 }
 
-// --- Draggable Modal Functions ---
-// (Keep as is)
+// --- MODIFIED Draggable Modal Functions ---
 function attachDragHandlers(headerElement, modalElement) {
     if (!headerElement || !modalElement) { console.error("attachDragHandlers: Header or Modal element missing."); return; }
     let specificDragOffsetX, specificDragOffsetY; let elementBeingDragged = null;
-    // --- MODIFIED: Prevent drag start on minimize button ---
+
     const onDragStart = (e) => {
-        if (e.target.classList.contains('modal-close-btn') || e.target.id === 'modal-close-btn' || e.target.id === 'project-list-minimize-btn' || e.target.closest('#lightbox-overlay')) return; // <-- Added check for minimize btn ID
-        elementBeingDragged = modalElement; elementBeingDragged.style.cursor = 'grabbing'; try { elementBeingDragged.offsetHeight; } catch(e) {} const rect = elementBeingDragged.getBoundingClientRect(); specificDragOffsetX = e.clientX - rect.left; specificDragOffsetY = e.clientY - rect.top; const computedStyle = window.getComputedStyle(elementBeingDragged); elementBeingDragged.style.width = computedStyle.width; elementBeingDragged.style.height = computedStyle.height; elementBeingDragged.style.transform = 'none'; elementBeingDragged.style.left = `${rect.left}px`; elementBeingDragged.style.top = `${rect.top}px`; window.addEventListener('mousemove', specificOnDragMove); window.addEventListener('mouseup', specificOnDragEnd); e.preventDefault(); e.stopPropagation(); };
-    const specificOnDragMove = (e) => { if (!elementBeingDragged) return; const newX = e.clientX - specificDragOffsetX; const newY = e.clientY - specificDragOffsetY; elementBeingDragged.style.left = `${newX}px`; elementBeingDragged.style.top = `${newY}px`; };
-    const specificOnDragEnd = () => { if (!elementBeingDragged) return; elementBeingDragged.style.cursor = ''; elementBeingDragged = null; window.removeEventListener('mousemove', specificOnDragMove); window.removeEventListener('mouseup', specificOnDragEnd); };
+        // Prevent drag start on control buttons
+        if (e.target.id === 'modal-close-btn' || e.target.id === 'project-list-minimize-btn') {
+            return; // Stop if click starts on a known button
+        }
+        // Prevent dragging if clicking within the lightbox
+        if (e.target.closest('#lightbox-overlay')) return;
+
+        // --- If not a control button, proceed with drag logic ---
+        elementBeingDragged = modalElement;
+        elementBeingDragged.style.cursor = 'grabbing';
+        try { elementBeingDragged.offsetHeight; } catch(e) {} // Force reflow
+
+        const rect = elementBeingDragged.getBoundingClientRect();
+        specificDragOffsetX = e.clientX - rect.left;
+        specificDragOffsetY = e.clientY - rect.top;
+
+        // --- MODIFICATION START: Conditionally set inline dimensions ---
+        // For the project list modal, its height must remain dynamic (auto/max-height)
+        // controlled by CSS classes (.minimized). Don't set inline height.
+        // We can skip width too, as it's fixed in CSS.
+        if (elementBeingDragged.id !== 'project-list-modal-container') {
+            // For other modals (like the detail modal), set inline dimensions
+            // based on their computed size at drag start.
+            const computedStyle = window.getComputedStyle(elementBeingDragged);
+            elementBeingDragged.style.width = computedStyle.width;
+            elementBeingDragged.style.height = computedStyle.height;
+            console.log(`Set inline dimensions for ${elementBeingDragged.id}`);
+        } else {
+            // For the project list modal, ensure inline height/width are cleared
+            // in case they were ever set previously, allowing CSS to control size.
+             elementBeingDragged.style.width = ''; // Let CSS rule (width: 250px) apply
+             elementBeingDragged.style.height = ''; // Let CSS rules (height: auto, max-height) apply
+             console.log(`Skipping inline dimensions for ${elementBeingDragged.id}`);
+        }
+        // --- MODIFICATION END ---
+
+        elementBeingDragged.style.transform = 'none'; // Use left/top positioning
+        elementBeingDragged.style.left = `${rect.left}px`; // Set initial position
+        elementBeingDragged.style.top = `${rect.top}px`; // Set initial position
+
+        window.addEventListener('mousemove', specificOnDragMove);
+        window.addEventListener('mouseup', specificOnDragEnd);
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    const specificOnDragMove = (e) => {
+        if (!elementBeingDragged) return;
+        const newX = e.clientX - specificDragOffsetX;
+        const newY = e.clientY - specificDragOffsetY;
+        elementBeingDragged.style.left = `${newX}px`;
+        elementBeingDragged.style.top = `${newY}px`;
+    };
+
+    const specificOnDragEnd = () => {
+        if (!elementBeingDragged) return;
+        elementBeingDragged.style.cursor = ''; // Reset cursor
+        // Note: We leave the inline left/top styles set by dragging.
+        // We have ensured inline height/width are NOT set for the list modal.
+        elementBeingDragged = null;
+        window.removeEventListener('mousemove', specificOnDragMove);
+        window.removeEventListener('mouseup', specificOnDragEnd);
+    };
+
     headerElement.addEventListener('mousedown', onDragStart);
 }
+// --- END MODIFIED Draggable Modal Functions ---
 
 // --- Lightbox Functions ---
 // (Keep as is)
