@@ -163,7 +163,7 @@ function populateTickerText() {
     const tickerTextElement = document.getElementById('ticker-text-content');
 
     if (tickerBandElement && tickerTextElement) {
-        const nameUnit = "JOHN IRVING\u00A0\u00A0\u00A0"; // Text unit with non-breaking spaces
+        const nameUnit = "JOHN IRVING email:johnlmirving@gmail.com IG:@__johnirving\u00A0\u00A0\u00A0"; // Text unit with non-breaking spaces
         let unitWidth = 0;
 
         // Measure width accurately using a temporary element
