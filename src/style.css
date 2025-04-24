@@ -9,59 +9,31 @@ body {
 
 /* --- Name Ticker Styles --- */
 #name-ticker-band {
-  position: fixed; /* Keep it fixed to the viewport top */
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #ffffff;
-  color: #000000;
-  line-height: 1.3;
-  padding: 0px 0; /* Vertical padding */
-  border-bottom: 1px solid #000000;
-  font-family: Consolas, Monaco, "Lucida Console", monospace;
-  font-size: 0.9em;
-  text-align: center;
-  z-index: 950;
-  box-sizing: border-box;
-  white-space: nowrap;
-  overflow: hidden;
+  position: fixed; top: 0; left: 0; width: 100%;
+  background-color: #ffffff; color: #000000; line-height: 1.3;
+  padding: 0px 0; border-bottom: 1px solid #000000;
+  font-family: Consolas, Monaco, "Lucida Console", monospace; font-size: 0.9em;
+  text-align: center; z-index: 950; box-sizing: border-box;
+  white-space: nowrap; overflow: hidden;
 }
-
-#ticker-text-content {
-  display: inline-block;
-}
-
+#ticker-text-content { display: inline-block; }
 /* --- End Ticker Styles --- */
 
 
 /* --- Image Layout Container --- */
 #image-grid-background {
-  /* padding-top will be set by JavaScript */
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px; /* Left/right/bottom padding */
-  column-width: 400px;
-  column-gap: 10px;
-  z-index: 1;
+  width: 100%; box-sizing: border-box; padding: 10px;
+  column-width: 400px; column-gap: 10px; z-index: 1;
+  /* padding-top set by JS */
 }
-
 /* --- Styles for Images within Columns --- */
 #image-grid-background img {
-  width: 100%;
-  height: auto;
-  display: block;
-  cursor: pointer; /* Clickable to open modal */
-  background-color: #ddd;
-  border: 1px solid #ccc;
-  margin-bottom: 10px;
-  break-inside: avoid;
-  box-sizing: border-box;
-  transition: transform 0.2s ease-out;
+  width: 100%; height: auto; display: block; cursor: pointer;
+  background-color: #ddd; border: 1px solid #ccc; margin-bottom: 10px;
+  break-inside: avoid; box-sizing: border-box; transition: transform 0.2s ease-out;
 }
-#image-grid-background img:hover {
-   z-index: 10;
-   transform: scale(1.02);
-}
+#image-grid-background img:hover { z-index: 10; transform: scale(1.02); }
+/* --- End Image Grid Styles --- */
 
 
 /* --- Detail Modal Styles --- */
@@ -101,53 +73,37 @@ body {
 /* --- Project List Modal Styles --- */
 #project-list-modal-container {
   display: flex; flex-direction: column; position: fixed;
-  /* Positioning */
-  top: auto;
-  bottom: 10px;
-  left: 10px;
+  top: auto; bottom: 10px; left: 10px;
   transform: none; width: 250px; height: auto; max-height: 70vh;
   background-color: white; border: 2px solid #000000; border-radius: 0px;
   font-family: inherit; z-index: 990;
   transition: max-height 0.3s ease;
   overflow: hidden; /* Keep this */
 }
+/* --- MODIFIED: Removed cursor: grab --- */
 #project-list-header {
     padding: 8px 10px; background-color: #ffffff; color: #333;
-    font-size: 0.9em; font-weight: bold; cursor: grab;
+    font-size: 0.9em; font-weight: bold; /* cursor: grab; */ /* REMOVED */
     border-bottom: 1px solid #000000; user-select: none;
     -webkit-user-select: none; -ms-user-select: none; flex-shrink: 0;
     position: relative;
     overflow: hidden; /* Keep for float containment */
 }
-
-/* Styles for Minimize Button (using float: right as per user's working baseline) */
-#project-list-minimize-btn {
-    float: right;
-    cursor: pointer;
-    font-size: 1.4em;
-    line-height: 0.9;
-    margin-left: 8px;
-    padding: 0 3px;
-    color: #555;
-    font-weight: bold;
-    user-select: none;
-   -webkit-user-select: none;
-   -ms-user-select: none;
-}
-#project-list-minimize-btn:hover {
-    color: #000;
-}
-
-
-/* --- MODIFIED: Removed flex-grow --- */
-#project-list-content {
-    padding: 10px;
-    overflow-y: auto; /* Keep for scrolling if content IS tall */
-    /* flex-grow: 1; */ /* <-- REMOVED this line */
-    min-height: 0; /* Keep this */
-}
 /* --- End Modification --- */
 
+/* Styles for Minimize Button (using float: right) */
+#project-list-minimize-btn {
+    float: right; cursor: pointer; font-size: 1.4em;
+    line-height: 0.9; margin-left: 8px; padding: 0 3px;
+    color: #555; font-weight: bold; user-select: none;
+    -webkit-user-select: none; -ms-user-select: none;
+}
+#project-list-minimize-btn:hover { color: #000; }
+
+/* Styles for list content (NO flex-grow) */
+#project-list-content {
+    padding: 10px; overflow-y: auto; min-height: 0;
+}
 #project-list-content ul { list-style: none; padding: 0; margin: 0; }
 #project-list-content li { margin-bottom: 5px; font-size: 0.85em; }
 #project-list-content li a.project-list-link { display: block; text-decoration: none; color: inherit; padding: 3px 5px; margin: -3px -5px; border-radius: 2px; cursor: pointer; }
@@ -155,15 +111,11 @@ body {
 
 /* Styles for Minimized State */
 #project-list-modal-container.minimized {
-    height: auto; /* Crucial: Let height shrink to content (just header) */
-    max-height: none; /* Remove max-height limit when minimized */
+    height: auto;
+    max-height: none;
 }
-#project-list-modal-container.minimized #project-list-content {
-    display: none;
-}
-#project-list-modal-container.minimized #project-list-header {
-    border-bottom: none;
-}
+#project-list-modal-container.minimized #project-list-content { display: none; }
+#project-list-modal-container.minimized #project-list-header { border-bottom: none; }
 /* --- End Project List Modal Styles --- */
 
 /* --- Tooltip Styles --- */
