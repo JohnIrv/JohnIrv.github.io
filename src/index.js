@@ -196,34 +196,49 @@ function populateTickerText() {
 }
 // --- End Ticker Text Population ---
 
-// --- MODIFIED: Function to Toggle Project List Minimize State ---
+// --- MODIFIED AGAIN: Function to Toggle Project List Minimize State ---
 function toggleProjectListMinimize() {
-    if (!projectListContainerElement || !projectListMinimizeBtnElement) {
-        console.error("Cannot toggle minimize: required elements missing.");
+    // Ensure all required elements are available
+    if (!projectListContainerElement || !projectListMinimizeBtnElement || !projectListHeaderElement) {
+        console.error("Cannot toggle minimize: required elements (container, button, or header) missing.");
         return;
     }
 
-    // --- MODIFICATION START: Force clear inline height ---
-    // Explicitly remove any inline height style before toggling the class.
-    // This ensures the CSS rules defined for the class (or lack thereof)
-    // take precedence for height calculation.
-    projectListContainerElement.style.height = '';
-    // --- MODIFICATION END ---
+    // Check if the modal is currently minimized by looking for the class
+    const isCurrentlyMinimized = projectListContainerElement.classList.contains('minimized');
 
-    // Toggle the 'minimized' class on the container
-    const isMinimized = projectListContainerElement.classList.toggle('minimized');
+    if (isCurrentlyMinimized) {
+        // --- MAXIMIZE ---
+        // Remove the minimized class (this makes content visible via CSS)
+        projectListContainerElement.classList.remove('minimized');
 
-    // Update the button text based on the new state
-    if (isMinimized) {
-        projectListMinimizeBtnElement.textContent = '+';
-        console.log("Project list minimized.");
-    } else {
+        // Remove the explicit inline height to allow CSS auto/max-height to work
+        projectListContainerElement.style.height = '';
+
+        // Update button text
         projectListMinimizeBtnElement.textContent = '-';
         console.log("Project list maximized.");
+
+    } else {
+        // --- MINIMIZE ---
+        // 1. Get the current computed height of the header ONLY.
+        //    offsetHeight includes padding and border, which is what we want.
+        const headerHeight = projectListHeaderElement.offsetHeight;
+        // console.log(`Header offsetHeight: ${headerHeight}px`); // For debugging
+
+        // 2. Set the container's height explicitly *before* adding the class
+        //    This overrides any 'auto' behavior and forces the minimized size.
+        projectListContainerElement.style.height = `${headerHeight}px`;
+
+        // 3. Add the minimized class (this hides the content via CSS)
+        projectListContainerElement.classList.add('minimized');
+
+        // 4. Update button text
+        projectListMinimizeBtnElement.textContent = '+';
+        console.log("Project list minimized.");
     }
 }
 // --- End Toggle Project List Minimize State ---
-
 
 // --- Initialization and Event Listeners ---
 window.addEventListener('DOMContentLoaded', () => {
