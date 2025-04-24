@@ -109,7 +109,7 @@ body {
   background-color: white; border: 2px solid #000000; border-radius: 0px;
   font-family: inherit; z-index: 990;
   transition: max-height 0.3s ease;
-  overflow: hidden; /* <-- ADDED: Prevent content overflow from affecting size */
+  overflow: hidden; /* Keep this */
 }
 #project-list-header {
     padding: 8px 10px; background-color: #ffffff; color: #333;
@@ -139,7 +139,15 @@ body {
 }
 
 
-#project-list-content { padding: 10px; overflow-y: auto; flex-grow: 1; min-height: 0; }
+/* --- MODIFIED: Removed flex-grow --- */
+#project-list-content {
+    padding: 10px;
+    overflow-y: auto; /* Keep for scrolling if content IS tall */
+    /* flex-grow: 1; */ /* <-- REMOVED this line */
+    min-height: 0; /* Keep this */
+}
+/* --- End Modification --- */
+
 #project-list-content ul { list-style: none; padding: 0; margin: 0; }
 #project-list-content li { margin-bottom: 5px; font-size: 0.85em; }
 #project-list-content li a.project-list-link { display: block; text-decoration: none; color: inherit; padding: 3px 5px; margin: -3px -5px; border-radius: 2px; cursor: pointer; }
