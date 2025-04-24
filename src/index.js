@@ -5,7 +5,7 @@
 // Clicking grid images attempts to open the corresponding project modal.
 // Handles modal display and lightbox functionality (modal images only).
 // Handles minimizing/maximizing the project list modal.
-// VERSION: CSS Columns Background + Static JS Ticker Population + Random Grid Order + List Modal Bottom Left + List Modal Minimize + Drag Fix v2 + List Drag Removed
+// VERSION: CSS Columns Background + Static JS Ticker Population + Random Grid Order + List Modal Bottom Left + List Modal Minimize + Drag Fix v2 + List Drag Removed + Ticker Animation JS
 
 import './style.css'; // Import CSS
 import { PROJECTS } from './constants.js';
@@ -29,7 +29,7 @@ const allImagePaths = [ /* Ensure your full list is here */
 let modalContainerElement = null, modalContentElement = null, modalCloseBtnElement = null, modalHeaderElement = null;
 let projectListContainerElement = null, projectListHeaderElement = null, projectListContentElement = null, projectListMinimizeBtnElement = null;
 let lightboxOverlay = null, lightboxImage = null, lightboxClose = null;
-let isDragging = false; // Note: This might become redundant if only one modal drags, but keep for now
+let isDragging = false;
 let currentLightboxImages = [];
 let currentLightboxIndex = 0;
 let currentlyDisplayedProjectIndex = -1;
@@ -51,60 +51,47 @@ function attachDragHandlers(headerElement, modalElement) {
     let specificDragOffsetX, specificDragOffsetY; let elementBeingDragged = null;
 
     const onDragStart = (e) => {
-        // Prevent drag start on known control buttons (like detail modal close)
-        // No need to check list minimize button here as this won't be attached to list header
-        if (e.target.id === 'modal-close-btn') {
+        // Prevent drag start on known control buttons
+        if (e.target.id === 'modal-close-btn') { // Only need to check detail modal close here
             return;
         }
-        // Prevent dragging if clicking within the lightbox
         if (e.target.closest('#lightbox-overlay')) return;
 
-        // --- Proceed with drag logic ---
         elementBeingDragged = modalElement;
         elementBeingDragged.style.cursor = 'grabbing';
-        try { elementBeingDragged.offsetHeight; } catch(e) {} // Force reflow
+        try { elementBeingDragged.offsetHeight; } catch(e) {}
 
         const rect = elementBeingDragged.getBoundingClientRect();
-        specificDragOffsetX = e.clientX - rect.left;
-        specificDragOffsetY = e.clientY - rect.top;
+        specificDragOffsetX = e.clientX - rect.left; specificDragOffsetY = e.clientY - rect.top;
 
-        // Set inline dimensions only for the detail modal (since this handler is only attached there now)
-        // This assumes the detail modal benefits from fixed size during drag
+        // Set inline dimensions only for the detail modal
         const computedStyle = window.getComputedStyle(elementBeingDragged);
         elementBeingDragged.style.width = computedStyle.width;
         elementBeingDragged.style.height = computedStyle.height;
         console.log(`Set inline dimensions for ${elementBeingDragged.id}`);
 
+        elementBeingDragged.style.transform = 'none';
+        elementBeingDragged.style.left = `${rect.left}px`; elementBeingDragged.style.top = `${rect.top}px`;
 
-        elementBeingDragged.style.transform = 'none'; // Use left/top positioning
-        elementBeingDragged.style.left = `${rect.left}px`; // Set initial position
-        elementBeingDragged.style.top = `${rect.top}px`; // Set initial position
-
-        window.addEventListener('mousemove', specificOnDragMove);
-        window.addEventListener('mouseup', specificOnDragEnd);
-        e.preventDefault();
-        e.stopPropagation();
+        window.addEventListener('mousemove', specificOnDragMove); window.addEventListener('mouseup', specificOnDragEnd);
+        e.preventDefault(); e.stopPropagation();
     };
 
     const specificOnDragMove = (e) => {
         if (!elementBeingDragged) return;
-        const newX = e.clientX - specificDragOffsetX;
-        const newY = e.clientY - specificDragOffsetY;
-        elementBeingDragged.style.left = `${newX}px`;
-        elementBeingDragged.style.top = `${newY}px`;
+        const newX = e.clientX - specificDragOffsetX; const newY = e.clientY - specificDragOffsetY;
+        elementBeingDragged.style.left = `${newX}px`; elementBeingDragged.style.top = `${newY}px`;
     };
-
     const specificOnDragEnd = () => {
         if (!elementBeingDragged) return;
-        elementBeingDragged.style.cursor = ''; // Reset cursor
+        elementBeingDragged.style.cursor = '';
         elementBeingDragged = null;
-        window.removeEventListener('mousemove', specificOnDragMove);
-        window.removeEventListener('mouseup', specificOnDragEnd);
+        window.removeEventListener('mousemove', specificOnDragMove); window.removeEventListener('mouseup', specificOnDragEnd);
     };
-
     headerElement.addEventListener('mousedown', onDragStart);
 }
 // --- END Draggable Modal Functions ---
+
 
 // --- Lightbox Functions ---
 function hideLightbox() {
@@ -170,12 +157,16 @@ function findProjectIndexForImage(imageSrc) {
 
 
 // --- Ticker Text Population (Single Span) ---
+// MODIFIED: Populate with doubled text for seamless animation loop
 function populateTickerText() {
     const tickerBandElement = document.getElementById('name-ticker-band');
     const tickerTextElement = document.getElementById('ticker-text-content');
+
     if (tickerBandElement && tickerTextElement) {
-        const nameUnit = "JOHN IRVING\u00A0\u00A0\u00A0";
+        const nameUnit = "JOHN IRVING\u00A0\u00A0\u00A0"; // Text unit with non-breaking spaces
         let unitWidth = 0;
+
+        // Measure width accurately using a temporary element
         const tempSpan = document.createElement('span');
         try {
             tempSpan.style.visibility = 'hidden'; tempSpan.style.position = 'absolute'; tempSpan.style.whiteSpace = 'nowrap';
@@ -184,11 +175,33 @@ function populateTickerText() {
             tempSpan.textContent = nameUnit; document.body.appendChild(tempSpan); unitWidth = tempSpan.offsetWidth;
         } catch (e) { console.error("Error measuring text width:", e);
         } finally { if (tempSpan.parentNode === document.body) { document.body.removeChild(tempSpan); } }
+
         if (unitWidth > 0) {
-            const screenWidth = window.innerWidth; const repeatsNeeded = Math.ceil(screenWidth / unitWidth) + 2; const fullTextSegment = nameUnit.repeat(repeatsNeeded);
-            if (tickerTextElement.textContent !== fullTextSegment) { tickerTextElement.textContent = fullTextSegment; console.log(`Ticker Text Updated: Unit width ${unitWidth}px, needed ${repeatsNeeded} repeats.`); }
-        } else { console.error("Ticker Text: Could not calculate unit width. Using fallback."); if (!tickerTextElement.textContent.startsWith(nameUnit)) { tickerTextElement.textContent = (nameUnit).repeat(30); } }
-    } else { console.warn("Ticker elements (#name-ticker-band, #ticker-text-content) not found for dynamic population."); }
+            const screenWidth = window.innerWidth;
+            // Calculate repeats needed just to fill the screen width + a buffer
+            const repeatsNeeded = Math.ceil(screenWidth / unitWidth) + 2;
+            const singleTextSegment = nameUnit.repeat(repeatsNeeded);
+
+            // --- MODIFICATION: Double the segment for animation ---
+            const fullTextForAnimation = singleTextSegment + singleTextSegment;
+            // --- End Modification ---
+
+            // Check if text content needs updating
+            if (tickerTextElement.textContent !== fullTextForAnimation) {
+                 tickerTextElement.textContent = fullTextForAnimation; // Set doubled text
+                 console.log(`Ticker Text Updated: Unit width ${unitWidth}px, needed ${repeatsNeeded} repeats per segment.`);
+            }
+        } else {
+            console.error("Ticker Text: Could not calculate unit width. Using fallback.");
+            const fallbackSegment = (nameUnit).repeat(30); // Arbitrary fallback segment
+            // Avoid setting fallback repeatedly if width calculation fails consistently
+            if (!tickerTextElement.textContent.startsWith(fallbackSegment)) {
+                 tickerTextElement.textContent = fallbackSegment + fallbackSegment; // Double fallback too
+            }
+        }
+    } else {
+        console.warn("Ticker elements (#name-ticker-band, #ticker-text-content) not found for dynamic population.");
+    }
 }
 // --- End Ticker Text Population ---
 
@@ -211,7 +224,7 @@ function toggleProjectListMinimize() {
 // --- Initialization and Event Listeners ---
 window.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Loaded - Getting elements...');
-    // Get all needed elements
+    // Get elements
     modalContainerElement = document.getElementById('modal-container');
     modalContentElement = document.getElementById('modal-content');
     modalCloseBtnElement = document.getElementById('modal-close-btn');
@@ -227,13 +240,13 @@ window.addEventListener('DOMContentLoaded', () => {
     const tickerBandElement = document.getElementById('name-ticker-band');
 
     // Ticker setup
-    populateTickerText();
+    populateTickerText(); // Call the updated function
     let resizeTimer;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-            console.log("Window resized, repopulating static ticker text...");
-            populateTickerText();
+            console.log("Window resized, repopulating ticker text for animation...");
+            populateTickerText(); // Repopulate doubled text on resize
             if (tickerBandElement) adjustLayout(tickerBandElement, imageContainer, projectListContainerElement);
         }, 250);
     });
@@ -295,7 +308,7 @@ window.addEventListener('DOMContentLoaded', () => {
         modalCloseBtnElement.addEventListener('click', () => { if (modalContainerElement) { modalContainerElement.style.display = 'none'; } });
         // Attach drag handler ONLY to the detail modal header
         if(modalHeaderElement) {
-            attachDragHandlers(modalHeaderElement, modalContainerElement); // <<<< Attach here
+            attachDragHandlers(modalHeaderElement, modalContainerElement);
             console.log("Attached drag handler to Detail Modal");
         } else { console.warn("Detail modal header not found!");}
         // Listener for lightbox triggers inside detail modal
@@ -308,11 +321,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (projectListContainerElement && projectListHeaderElement && projectListContentElement) {
         console.log('Populating and attaching handlers to list modal...');
         populateProjectList();
-
-        // --- Drag handler NOT attached here ---
         console.log("Drag handler NOT attached to Project List Modal");
-        // -------------------------------------
-
         // Listener for project links inside list modal
         projectListContentElement.addEventListener('click', (event) => {
             const link = event.target.closest('a.project-list-link');
