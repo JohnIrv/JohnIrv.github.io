@@ -35,7 +35,7 @@ body {
   display: inline-block; /* Allows transform and respects white-space */
   padding-left: 0; /* Adjust as needed, might interact with translateX */
   /* Apply the animation */
-  animation: marqueeScrollLeft 60s linear infinite; /* Adjust 30s to control speed (higher = slower) */
+  animation: marqueeScrollLeft 60s linear infinite; /* Speed adjusted */
   will-change: transform; /* Performance hint */
   /* Ensure it doesn't wrap (redundant with parent but safe) */
   white-space: nowrap;
@@ -53,8 +53,9 @@ body {
     text-decoration: underline;
     text-decoration-color: black; /* Ensure underline is black */
     text-decoration-thickness: 1px; /* Optional: adjust thickness */
-    /* Ensure descendant spans inherit color by default if needed, though we override below */
-    color: inherit; /* Take color from parent unless overridden by span */
+    /* --- MODIFIED: Explicitly set color to black --- */
+    color: black; /* Explicitly set default/visited link color to black */
+    /* --- End Modification --- */
 }
 
 /* Specific colors for letters/parts */
@@ -75,7 +76,7 @@ body {
 
 #ticker-text-content a.ticker-link .ticker-link-works,
 #ticker-text-content a.ticker-link:visited .ticker-link-works {
-    color: rgb(0, 0, 0);
+    color: rgb(0, 0, 0); /* Changed to rgb(0,0,0) - same as black */
 }
 
 /* Optional: Hover effect for the link */
