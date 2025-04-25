@@ -1,11 +1,11 @@
 // src/index.js
 // Main application file for the portfolio.
 // Displays a masonry-like column layout of randomly ordered images via CSS.
-// Dynamically populates a static name ticker (with animation + styled links) based on screen width using JS.
+// Dynamically populates a static name ticker based on screen width using JS.
 // Clicking grid images attempts to open the corresponding project modal.
 // Handles modal display and lightbox functionality (modal images only).
 // Handles minimizing/maximizing the project list modal.
-// VERSION: CSS Columns Background + Static JS Ticker Population + Random Grid Order + List Modal Bottom Left + List Modal Minimize + Drag Fix v2 + List Drag Removed + Ticker Animation JS + Styled Ticker Link v2 (Handle Span)
+// VERSION: CSS Columns Background + Static JS Ticker Population + Random Grid Order + List Modal Bottom Left + List Modal Minimize + Drag Fix v2 + List Drag Removed + Ticker Animation JS + Styled Ticker Link
 
 import './style.css'; // Import CSS
 import { PROJECTS } from './constants.js';
@@ -163,41 +163,43 @@ function populateTickerText() {
     const tickerTextElement = document.getElementById('ticker-text-content');
 
     if (tickerBandElement && tickerTextElement) {
-        // --- MODIFICATION: Add span around @__johnirving handle ---
-        const nameUnit = "John Irving is an artist and animator who lives and works in NYC. He is a cofounder of <a href='https://incworks.studio' target='_blank' rel='noopener noreferrer' class='ticker-link'><span class='ticker-link-i'>I</span><span class='ticker-link-n'>N</span><span class='ticker-link-c'>C</span><span class='ticker-link-works'>works</span></a> studio. He can be reached at: johnlmirving@gmail.com OR <a href='https://www.instagram.com/__johnirving/' target='_blank' rel='noopener noreferrer' class='ticker-link'><span class='ticker-link-handle'>@__johnirving</span></a>\u00A0\u00A0\u00A0";
-        // Text-only version remains the same for width calculation
+        // --- Define nameUnit with spans for styling ---
+        const nameUnit = "John Irving is an artist and animator who lives and works in NYC. He is a cofounder of <a href='https://incworks.studio' target='_blank' rel='noopener noreferrer' class='ticker-link'><span class='ticker-link-i'>I</span><span class='ticker-link-n'>N</span><span class='ticker-link-c'>C</span><span class='ticker-link-works'>works</span></a> studio. He can be reached at: johnlmirving@gmail.com OR <a href='https://www.instagram.com/__johnirving/'>@__johnirving</a>\u00A0\u00A0\u00A0";
+        // Define the text-only version for width calculation
         const nameUnitTextOnly = "John Irving is an artist and animator who lives and works in NYC. He is a cofounder of INCworks studio. He can be reached at: johnlmirving@gmail.com OR @__johnirving\u00A0\u00A0\u00A0";
-        // --- End Modification ---
 
         let unitWidth = 0;
+
+        // Measure width accurately using a temporary element with text only
         const tempSpan = document.createElement('span');
         try {
-             // ... (width measurement logic using nameUnitTextOnly remains the same) ...
-             tempSpan.style.visibility = 'hidden'; tempSpan.style.position = 'absolute'; tempSpan.style.whiteSpace = 'nowrap';
-             const tickerStyle = window.getComputedStyle(tickerBandElement); const textStyle = window.getComputedStyle(tickerTextElement);
-             tempSpan.style.fontFamily = textStyle.fontFamily || tickerStyle.fontFamily; tempSpan.style.fontSize = textStyle.fontSize || tickerStyle.fontSize; tempSpan.style.letterSpacing = textStyle.letterSpacing || '1px';
-             tempSpan.textContent = nameUnitTextOnly; // Use text only version
-             document.body.appendChild(tempSpan); unitWidth = tempSpan.offsetWidth;
+            tempSpan.style.visibility = 'hidden'; tempSpan.style.position = 'absolute'; tempSpan.style.whiteSpace = 'nowrap';
+            const tickerStyle = window.getComputedStyle(tickerBandElement); const textStyle = window.getComputedStyle(tickerTextElement);
+            tempSpan.style.fontFamily = textStyle.fontFamily || tickerStyle.fontFamily; tempSpan.style.fontSize = textStyle.fontSize || tickerStyle.fontSize; tempSpan.style.letterSpacing = textStyle.letterSpacing || '1px';
+            tempSpan.textContent = nameUnitTextOnly; // Use text only version for measurement
+            document.body.appendChild(tempSpan); unitWidth = tempSpan.offsetWidth;
         } catch (e) { console.error("Error measuring text width:", e);
         } finally { if (tempSpan.parentNode === document.body) { document.body.removeChild(tempSpan); } }
 
         if (unitWidth > 0) {
             const screenWidth = window.innerWidth;
             const repeatsNeeded = Math.ceil(screenWidth / unitWidth) + 2;
-            const singleTextSegment = nameUnit.repeat(repeatsNeeded); // Repeat the HTML version
+            // Repeat the HTML version of the unit
+            const singleTextSegment = nameUnit.repeat(repeatsNeeded);
             const fullTextForAnimation = singleTextSegment + singleTextSegment;
 
+            // Use innerHTML because nameUnit now contains HTML tags
             if (tickerTextElement.innerHTML !== fullTextForAnimation) {
                  tickerTextElement.innerHTML = fullTextForAnimation; // Use innerHTML
                  console.log(`Ticker Text Updated: Unit width ${unitWidth}px, needed ${repeatsNeeded} repeats per segment.`);
             }
         } else {
-             // Fallback logic using nameUnit and innerHTML
-             console.error("Ticker Text: Could not calculate unit width. Using fallback.");
-             const fallbackSegment = (nameUnit).repeat(30);
-             if (!tickerTextElement.innerHTML.startsWith(fallbackSegment)) {
-                  tickerTextElement.innerHTML = fallbackSegment + fallbackSegment;
-             }
+            console.error("Ticker Text: Could not calculate unit width. Using fallback.");
+            const fallbackSegment = (nameUnit).repeat(30); // Repeat the HTML version
+            // Check innerHTML for fallback
+            if (!tickerTextElement.innerHTML.startsWith(fallbackSegment)) {
+                 tickerTextElement.innerHTML = fallbackSegment + fallbackSegment; // Use innerHTML
+            }
         }
     } else {
         console.warn("Ticker elements (#name-ticker-band, #ticker-text-content) not found for dynamic population.");
@@ -238,7 +240,6 @@ window.addEventListener('DOMContentLoaded', () => {
     lightboxClose = document.getElementById('lightbox-close');
     const imageContainer = document.getElementById('image-grid-background');
     const tickerBandElement = document.getElementById('name-ticker-band');
-    // No longer need explicit ref for ticker text listener here
 
     // Ticker setup
     populateTickerText(); // Call the updated function
@@ -269,18 +270,53 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Populate Image Grid
     if (imageContainer) {
-        if (allImagePaths.length === 0) { /* ... */ } else { /* ... */ }
+        if (allImagePaths.length === 0) {
+             console.warn("The 'allImagePaths' array is empty!");
+             imageContainer.innerHTML = '<p style="text-align: center; padding: 20px;">No images found.</p>';
+        } else {
+            console.log("Shuffling image paths...");
+            shuffleArray(allImagePaths);
+            allImagePaths.forEach((imgPath, index) => {
+                const img = document.createElement('img');
+                img.src = imgPath;
+                const fileName = imgPath.substring(imgPath.lastIndexOf('/') + 1);
+                img.alt = `Portfolio image: ${fileName}`;
+                img.loading = 'lazy';
+                img.dataset.index = index;
+                imageContainer.appendChild(img);
+            });
+             console.log(`Appended ${allImagePaths.length} images in random order.`);
+            imageContainer.addEventListener('click', (event) => {
+                if (event.target.tagName === 'IMG' && event.target.src) {
+                    const clickedImageSrc = event.target.src;
+                    console.log("--- Grid Image Clicked ---");
+                    const projectIndex = findProjectIndexForImage(clickedImageSrc);
+                    if (projectIndex !== -1) {
+                        console.log(`>>> Action: Opening modal for project index ${projectIndex}.`);
+                        openOrUpdateDetailModal(projectIndex);
+                        event.stopPropagation();
+                    } else {
+                        console.log(">>> Action: No project found for this image.");
+                    }
+                    console.log("--- End Grid Image Click ---");
+                }
+            });
+        }
     } else { console.error("Image container '#image-grid-background' not found!"); }
 
     // --- Modal Setup ---
     // Detail Modal Setup (Still Draggable)
      if (modalContainerElement && modalContentElement && modalCloseBtnElement) {
         modalCloseBtnElement.addEventListener('click', () => { if (modalContainerElement) { modalContainerElement.style.display = 'none'; } });
+        // Attach drag handler ONLY to the detail modal header
         if(modalHeaderElement) {
             attachDragHandlers(modalHeaderElement, modalContainerElement);
             console.log("Attached drag handler to Detail Modal");
         } else { console.warn("Detail modal header not found!");}
-        modalContentElement.addEventListener('click', (event) => { /* ... lightbox trigger logic ... */ });
+        // Listener for lightbox triggers inside detail modal
+        modalContentElement.addEventListener('click', (event) => {
+            let imageIndex = -1; let sourceType = null; const imageItemWrapper = event.target.closest('.additional-image-item'); if (imageItemWrapper) { const imgElement = imageItemWrapper.querySelector('img'); if (imgElement?.dataset.index !== undefined) { imageIndex = parseInt(imgElement.dataset.index, 10); sourceType = 'additional'; } } if (sourceType === null) { const centerpieceImgElement = event.target.closest('.centerpiece-images-container img.lightbox-trigger'); if (centerpieceImgElement?.dataset.index !== undefined) { imageIndex = parseInt(centerpieceImgElement.dataset.index, 10); sourceType = 'centerpiece'; } } if (sourceType !== null && !isNaN(imageIndex) && currentlyDisplayedProjectIndex !== -1) { openLightbox(currentlyDisplayedProjectIndex, imageIndex, sourceType); } else if (sourceType !== null) { console.warn("Lightbox click (modal): Could not parse image index."); }
+        });
     } else { console.warn("Detail modal elements not found! Cannot attach listeners.");}
 
     // Project List Modal Setup (NOT Draggable)
@@ -288,7 +324,15 @@ window.addEventListener('DOMContentLoaded', () => {
         console.log('Populating and attaching handlers to list modal...');
         populateProjectList();
         console.log("Drag handler NOT attached to Project List Modal");
-        projectListContentElement.addEventListener('click', (event) => { /* ... project link logic ... */ });
+        // Listener for project links inside list modal
+        projectListContentElement.addEventListener('click', (event) => {
+            const link = event.target.closest('a.project-list-link');
+            if (link?.dataset.index) {
+                event.preventDefault(); const projectIndex = parseInt(link.dataset.index, 10);
+                if (!isNaN(projectIndex)) { openOrUpdateDetailModal(projectIndex); }
+            }
+        });
+        // Add listener for the minimize button
         if (projectListMinimizeBtnElement) {
              projectListMinimizeBtnElement.addEventListener('click', (event) => {
                  event.stopPropagation();
@@ -297,12 +341,17 @@ window.addEventListener('DOMContentLoaded', () => {
         } else { console.warn("Minimize button for project list not found!"); }
     } else { console.warn("Skipping list modal setup - elements not found."); }
 
-    // Initial styling for modals
-    if (modalContainerElement) { modalContainerElement.style.display = 'none'; }
-    if (projectListContainerElement) { /* ... */ }
+    // Initial styling for modals (keep)
+    if (modalContainerElement) { modalContainerElement.style.display = 'none'; } else { console.warn("Detail modal container not found."); }
+    if (projectListContainerElement) {
+        try { projectListContainerElement.style.display = 'flex'; projectListContainerElement.style.visibility = 'visible'; projectListContainerElement.style.opacity = '1'; } catch(e) { console.error("Error setting initial list modal styles:", e); }
+    } else { console.error("Project List Container Element NOT FOUND!"); }
 
     // Lightbox Setup
-    if (lightboxOverlay && lightboxImage && lightboxClose) { /* ... */ } else { console.error("Lightbox elements not found! Cannot attach listeners."); }
+    if (lightboxOverlay && lightboxImage && lightboxClose) {
+        lightboxClose.addEventListener('click', (event) => { hideLightbox(); event.stopPropagation(); });
+        lightboxOverlay.addEventListener('click', (event) => { if (event.target === lightboxOverlay) { hideLightbox(); event.stopPropagation(); } });
+    } else { console.error("Lightbox elements not found! Cannot attach listeners."); }
     window.addEventListener('keydown', handleLightboxKeys);
 
     console.log('DOM setup complete.');
