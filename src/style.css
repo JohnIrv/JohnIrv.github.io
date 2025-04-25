@@ -35,7 +35,7 @@ body {
   display: inline-block; /* Allows transform and respects white-space */
   padding-left: 0; /* Adjust as needed, might interact with translateX */
   /* Apply the animation */
-  animation: marqueeScrollLeft 30s linear infinite; /* Adjust 30s to control speed (higher = slower) */
+  animation: marqueeScrollLeft 60s linear infinite; /* Adjust 30s to control speed (higher = slower) */
   will-change: transform; /* Performance hint */
   /* Ensure it doesn't wrap (redundant with parent but safe) */
   white-space: nowrap;

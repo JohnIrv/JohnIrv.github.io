@@ -164,7 +164,7 @@ function populateTickerText() {
 
     if (tickerBandElement && tickerTextElement) {
         // --- Define nameUnit with spans for styling ---
-        const nameUnit = "John Irving is an artist and animator who lives and works in NYC. He is a cofounder of <a href='https://incworks.studio' target='_blank' rel='noopener noreferrer' class='ticker-link'><span class='ticker-link-i'>I</span><span class='ticker-link-n'>N</span><span class='ticker-link-c'>C</span><span class='ticker-link-works'>works</span></a> studio. He can be reached at: <span class='copy-email-trigger' data-clipboard-text='${emailAddress}' title='johnlmirving@gmail.com'>${emailAddress}</span> OR <a href='https://www.instagram.com/__johnirving/'>@__johnirving</a>\u00A0\u00A0\u00A0";
+        const nameUnit = "John Irving is an artist and animator who lives and works in NYC. He is a cofounder of <a href='https://incworks.studio' target='_blank' rel='noopener noreferrer' class='ticker-link'><span class='ticker-link-i'>I</span><span class='ticker-link-n'>N</span><span class='ticker-link-c'>C</span><span class='ticker-link-works'>works</span></a> studio. He can be reached at: johnlmirving@gmail.com OR <a href='https://www.instagram.com/__johnirving/'>@__johnirving</a>\u00A0\u00A0\u00A0";
         // Define the text-only version for width calculation
         const nameUnitTextOnly = "John Irving is an artist and animator who lives and works in NYC. He is a cofounder of INCworks studio, and is available for freelance.\u00A0\u00A0\u00A0";
 
