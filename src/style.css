@@ -13,31 +13,23 @@ body {
   background-color: #ffffff; color: #000000; line-height: 1.3;
   padding: 0px 0; border-bottom: 1px solid #000000;
   font-family: Consolas, Monaco, "Lucida Console", monospace; font-size: 0.9em;
-  /* text-align: center; -- No longer needed */
   z-index: 950; box-sizing: border-box;
-  white-space: nowrap; /* Crucial for horizontal layout */
-  overflow: hidden; /* Crucial to hide non-visible part */
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 /* Keyframes for Marquee Animation */
 @keyframes marqueeScrollLeft {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    /* Translate left by exactly half the total width (width of one segment) */
-    transform: translateX(-50%);
-  }
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
 }
 
 /* Styles for the ticker text content span */
 #ticker-text-content {
-  display: inline-block; /* Allows transform and respects white-space */
-  padding-left: 0; /* Adjust as needed, might interact with translateX */
-  /* Apply the animation */
+  display: inline-block;
+  padding-left: 0;
   animation: marqueeScrollLeft 60s linear infinite; /* Speed adjusted */
-  will-change: transform; /* Performance hint */
-  /* Ensure it doesn't wrap (redundant with parent but safe) */
+  will-change: transform;
   white-space: nowrap;
 }
 
@@ -49,39 +41,39 @@ body {
 /* --- Styles for the link within the ticker --- */
 #ticker-text-content a.ticker-link,
 #ticker-text-content a.ticker-link:visited {
-    /* Base link style - controls underline */
     text-decoration: underline;
-    text-decoration-color: black; /* Ensure underline is black */
-    text-decoration-thickness: 1px; /* Optional: adjust thickness */
-    /* --- MODIFIED: Explicitly set color to black --- */
-    color: black; /* Explicitly set default/visited link color to black */
-    /* --- End Modification --- */
+    text-decoration-color: black;
+    text-decoration-thickness: 1px;
+    color: inherit; /* Let spans control specific colors */
 }
 
-/* Specific colors for letters/parts */
+/* Specific colors for INCworks parts */
 #ticker-text-content a.ticker-link .ticker-link-i,
 #ticker-text-content a.ticker-link:visited .ticker-link-i {
     color: blue;
 }
-
 #ticker-text-content a.ticker-link .ticker-link-n,
 #ticker-text-content a.ticker-link:visited .ticker-link-n {
     color: green;
 }
-
 #ticker-text-content a.ticker-link .ticker-link-c,
 #ticker-text-content a.ticker-link:visited .ticker-link-c {
     color: red;
 }
-
 #ticker-text-content a.ticker-link .ticker-link-works,
 #ticker-text-content a.ticker-link:visited .ticker-link-works {
-    color: rgb(0, 0, 0); /* Changed to rgb(0,0,0) - same as black */
+    color: black;
 }
+
+/* --- ADDED: Specific style for the @__johnirving handle --- */
+#ticker-text-content a.ticker-link .ticker-link-handle,
+#ticker-text-content a.ticker-link:visited .ticker-link-handle {
+    color: black; /* Force this part to be black */
+}
+/* --- End Add --- */
 
 /* Optional: Hover effect for the link */
 #ticker-text-content a.ticker-link:hover {
-    /* Example: change underline color on hover */
     /* text-decoration-color: darkgrey; */
 }
 /* --- End Link Styles --- */
