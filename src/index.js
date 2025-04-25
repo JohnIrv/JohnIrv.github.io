@@ -5,7 +5,7 @@
 // Clicking grid images attempts to open the corresponding project modal.
 // Handles modal display and lightbox functionality (modal images only).
 // Handles minimizing/maximizing the project list modal.
-// VERSION: CSS Columns Background + Static JS Ticker Population + Random Grid Order + List Modal Bottom Left + List Modal Minimize + Drag Fix v2 + List Drag Removed + Ticker Animation JS
+// VERSION: CSS Columns Background + Static JS Ticker Population + Random Grid Order + List Modal Bottom Left + List Modal Minimize + Drag Fix v2 + List Drag Removed + Ticker Animation JS + Styled Ticker Link
 
 import './style.css'; // Import CSS
 import { PROJECTS } from './constants.js';
@@ -157,46 +157,48 @@ function findProjectIndexForImage(imageSrc) {
 
 
 // --- Ticker Text Population (Single Span) ---
-// MODIFIED: Populate with doubled text for seamless animation loop
+// MODIFIED: Includes HTML link with spans for styling, uses innerHTML
 function populateTickerText() {
     const tickerBandElement = document.getElementById('name-ticker-band');
     const tickerTextElement = document.getElementById('ticker-text-content');
 
     if (tickerBandElement && tickerTextElement) {
-        const nameUnit = "John Irving is an artist and animator who lives and works in NYC. He is a cofounder of <a href=https://incworks.studio>INCworks</a> studio, and is available for freelance.\u00A0\u00A0\u00A0"; // Text unit with non-breaking spaces
+        // --- Define nameUnit with spans for styling ---
+        const nameUnit = "John Irving is an artist and animator who lives and works in NYC. He is a cofounder of <a href='https://incworks.studio' target='_blank' rel='noopener noreferrer' class='ticker-link'><span class='ticker-link-i'>I</span><span class='ticker-link-n'>N</span><span class='ticker-link-c'>C</span><span class='ticker-link-works'>works</span></a> studio, and is available for freelance.\u00A0\u00A0\u00A0";
+        // Define the text-only version for width calculation
+        const nameUnitTextOnly = "John Irving is an artist and animator who lives and works in NYC. He is a cofounder of INCworks studio, and is available for freelance.\u00A0\u00A0\u00A0";
+
         let unitWidth = 0;
 
-        // Measure width accurately using a temporary element
+        // Measure width accurately using a temporary element with text only
         const tempSpan = document.createElement('span');
         try {
             tempSpan.style.visibility = 'hidden'; tempSpan.style.position = 'absolute'; tempSpan.style.whiteSpace = 'nowrap';
             const tickerStyle = window.getComputedStyle(tickerBandElement); const textStyle = window.getComputedStyle(tickerTextElement);
             tempSpan.style.fontFamily = textStyle.fontFamily || tickerStyle.fontFamily; tempSpan.style.fontSize = textStyle.fontSize || tickerStyle.fontSize; tempSpan.style.letterSpacing = textStyle.letterSpacing || '1px';
-            tempSpan.textContent = nameUnit; document.body.appendChild(tempSpan); unitWidth = tempSpan.offsetWidth;
+            tempSpan.textContent = nameUnitTextOnly; // Use text only version for measurement
+            document.body.appendChild(tempSpan); unitWidth = tempSpan.offsetWidth;
         } catch (e) { console.error("Error measuring text width:", e);
         } finally { if (tempSpan.parentNode === document.body) { document.body.removeChild(tempSpan); } }
 
         if (unitWidth > 0) {
             const screenWidth = window.innerWidth;
-            // Calculate repeats needed just to fill the screen width + a buffer
             const repeatsNeeded = Math.ceil(screenWidth / unitWidth) + 2;
+            // Repeat the HTML version of the unit
             const singleTextSegment = nameUnit.repeat(repeatsNeeded);
-
-            // --- MODIFICATION: Double the segment for animation ---
             const fullTextForAnimation = singleTextSegment + singleTextSegment;
-            // --- End Modification ---
 
-            // Check if text content needs updating
+            // Use innerHTML because nameUnit now contains HTML tags
             if (tickerTextElement.innerHTML !== fullTextForAnimation) {
-                 tickerTextElement.innerHTML = fullTextForAnimation; // Set doubled text
+                 tickerTextElement.innerHTML = fullTextForAnimation; // Use innerHTML
                  console.log(`Ticker Text Updated: Unit width ${unitWidth}px, needed ${repeatsNeeded} repeats per segment.`);
             }
         } else {
             console.error("Ticker Text: Could not calculate unit width. Using fallback.");
-            const fallbackSegment = (nameUnit).repeat(30); // Arbitrary fallback segment
-            // Avoid setting fallback repeatedly if width calculation fails consistently
-            if (!tickerTextElement.textContent.startsWith(fallbackSegment)) {
-                 tickerTextElement.textContent = fallbackSegment + fallbackSegment; // Double fallback too
+            const fallbackSegment = (nameUnit).repeat(30); // Repeat the HTML version
+            // Check innerHTML for fallback
+            if (!tickerTextElement.innerHTML.startsWith(fallbackSegment)) {
+                 tickerTextElement.innerHTML = fallbackSegment + fallbackSegment; // Use innerHTML
             }
         }
     } else {
