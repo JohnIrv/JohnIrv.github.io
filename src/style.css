@@ -15,8 +15,8 @@ body {
   font-family: Consolas, Monaco, "Lucida Console", monospace; font-size: 0.9em;
   /* text-align: center; -- No longer needed */
   z-index: 950; box-sizing: border-box;
-  white-space: nowrap;
-  overflow: hidden;
+  white-space: nowrap; /* Crucial for horizontal layout */
+  overflow: hidden; /* Crucial to hide non-visible part */
 }
 
 /* Keyframes for Marquee Animation */
@@ -25,25 +25,65 @@ body {
     transform: translateX(0%);
   }
   100% {
+    /* Translate left by exactly half the total width (width of one segment) */
     transform: translateX(-50%);
   }
 }
 
 /* Styles for the ticker text content span */
 #ticker-text-content {
-  display: inline-block;
-  padding-left: 0;
+  display: inline-block; /* Allows transform and respects white-space */
+  padding-left: 0; /* Adjust as needed, might interact with translateX */
   /* Apply the animation */
-  animation: marqueeScrollLeft 30s linear infinite; /* Adjust 30s to control speed */
-  will-change: transform;
+  animation: marqueeScrollLeft 30s linear infinite; /* Adjust 30s to control speed (higher = slower) */
+  will-change: transform; /* Performance hint */
+  /* Ensure it doesn't wrap (redundant with parent but safe) */
   white-space: nowrap;
 }
 
-/* --- ADDED: Pause animation on hover --- */
+/* Pause animation on hover */
 #name-ticker-band:hover #ticker-text-content {
   animation-play-state: paused;
 }
-/* --- End Add --- */
+
+/* --- Styles for the link within the ticker --- */
+#ticker-text-content a.ticker-link,
+#ticker-text-content a.ticker-link:visited {
+    /* Base link style - controls underline */
+    text-decoration: underline;
+    text-decoration-color: black; /* Ensure underline is black */
+    text-decoration-thickness: 1px; /* Optional: adjust thickness */
+    /* Ensure descendant spans inherit color by default if needed, though we override below */
+    color: inherit; /* Take color from parent unless overridden by span */
+}
+
+/* Specific colors for letters/parts */
+#ticker-text-content a.ticker-link .ticker-link-i,
+#ticker-text-content a.ticker-link:visited .ticker-link-i {
+    color: blue;
+}
+
+#ticker-text-content a.ticker-link .ticker-link-n,
+#ticker-text-content a.ticker-link:visited .ticker-link-n {
+    color: green;
+}
+
+#ticker-text-content a.ticker-link .ticker-link-c,
+#ticker-text-content a.ticker-link:visited .ticker-link-c {
+    color: red;
+}
+
+#ticker-text-content a.ticker-link .ticker-link-works,
+#ticker-text-content a.ticker-link:visited .ticker-link-works {
+    color: black;
+}
+
+/* Optional: Hover effect for the link */
+#ticker-text-content a.ticker-link:hover {
+    /* Example: change underline color on hover */
+    /* text-decoration-color: darkgrey; */
+}
+/* --- End Link Styles --- */
 
 /* --- End Ticker Styles --- */
 
