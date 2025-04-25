@@ -187,8 +187,8 @@ function populateTickerText() {
             // --- End Modification ---
 
             // Check if text content needs updating
-            if (tickerTextElement.textContent !== fullTextForAnimation) {
-                 tickerTextElement.textContent = fullTextForAnimation; // Set doubled text
+            if (tickerTextElement.innerHTML !== fullTextForAnimation) {
+                 tickerTextElement.innerHTML = fullTextForAnimation; // Set doubled text
                  console.log(`Ticker Text Updated: Unit width ${unitWidth}px, needed ${repeatsNeeded} repeats per segment.`);
             }
         } else {
