@@ -75,7 +75,7 @@ body {
 
 #ticker-text-content a.ticker-link .ticker-link-works,
 #ticker-text-content a.ticker-link:visited .ticker-link-works {
-    color: black;
+    color: rgb(255, 255, 0);
 }
 
 /* Optional: Hover effect for the link */
