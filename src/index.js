@@ -163,7 +163,7 @@ function populateTickerText() {
     const tickerTextElement = document.getElementById('ticker-text-content');
 
     if (tickerBandElement && tickerTextElement) {
-        const nameUnit = "JOHN IRVING email:johnlmirving@gmail.com IG:@__johnirving\u00A0\u00A0\u00A0"; // Text unit with non-breaking spaces
+        const nameUnit = "John Irving is an artist and animator who lives and works in NYC. He is a cofounder of <a href=https://incworks.studio>INCworks</a> studio, and is available for freelance.\u00A0\u00A0\u00A0"; // Text unit with non-breaking spaces
         let unitWidth = 0;
 
         // Measure width accurately using a temporary element
