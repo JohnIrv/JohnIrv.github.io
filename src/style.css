@@ -198,6 +198,7 @@ body {
     border-radius: 0;   /* Remove rounded corners */
     display: flex;      /* Use flexbox to manage header/content */
     flex-direction: column; /* Stack header above content */
+    overflow: hidden;
   }
 
   /* --- Modal Header (Mobile) --- */
@@ -219,6 +220,7 @@ body {
     overflow-y: auto;   /* Keep vertical scrolling */
     padding: 15px;      /* Adjust padding for smaller screen */
     text-align: left;   /* Align text to left by default on mobile */
+    touch-action: pan-y;
   }
 
   /* Re-center specific block elements if needed */
