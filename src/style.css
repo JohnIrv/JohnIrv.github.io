@@ -181,3 +181,87 @@ body {
 #lightbox-image { display: block; max-width: 90%; max-height: 90%; object-fit: contain; cursor: default; }
 #lightbox-close { z-index: 1011; position: absolute; top: 15px; right: 25px; font-size: 2.5em; color: #fff; cursor: pointer; line-height: 1; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
 #lightbox-close:hover { color: #ccc; }
+
+/* Apply styles for screens 600px wide or less */
+@media (max-width: 600px) {
+
+  /* --- Detail Modal Container (Mobile) --- */
+  #modal-container {
+    width: 100%;        /* Use full screen width */
+    height: 100%;       /* Use full screen height */
+    top: 0;             /* Position at the top */
+    left: 0;            /* Position at the left */
+    transform: none;    /* Remove the desktop centering transform */
+    max-width: none;    /* Remove desktop max-width limit */
+    max-height: none;   /* Remove desktop max-height limit */
+    border: none;       /* Remove border for edge-to-edge look */
+    border-radius: 0;   /* Remove rounded corners */
+    display: flex;      /* Use flexbox to manage header/content */
+    flex-direction: column; /* Stack header above content */
+  }
+
+  /* --- Modal Header (Mobile) --- */
+  #modal-header {
+    flex-shrink: 0; /* Prevent header from shrinking */
+    position: sticky; /* Keep header visible when scrolling content */
+    top: 0;           /* Stick to the top */
+    background-color: white; /* Ensure background for overlap */
+    z-index: 1;       /* Keep header above content */
+    /* Existing padding, border-bottom, and close button styles remain */
+  }
+
+  /* --- Modal Content (Mobile) --- */
+  #modal-content {
+    max-width: none;    /* Remove desktop max-width limit */
+    flex-grow: 1;       /* Allow content area to fill available space */
+    height: auto;       /* Let height be determined by flexbox */
+    max-height: none;   /* Remove desktop max-height limit */
+    overflow-y: auto;   /* Keep vertical scrolling */
+    padding: 15px;      /* Adjust padding for smaller screen */
+    text-align: left;   /* Align text to left by default on mobile */
+  }
+
+  /* Re-center specific block elements if needed */
+   #modal-content h2,
+   #modal-content > p.modal-subtitle, /* Keep subtitle centered if desired */
+   .modal-image-container img,
+   .video-wrapper,
+   .centerpiece-images-container img,
+   .modal-link {
+      display: block; /* Ensure block display for margin auto */
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+   }
+   /* Ensure description paragraphs stay left-aligned */
+   #modal-content > p:not(.modal-subtitle) {
+     text-align: left;
+   }
+
+
+  /* --- Additional Image Thumbnails (Mobile) --- */
+  .additional-images-container {
+    /* Center items if space allows (e.g., if switching to 1 column) */
+    justify-content: center;
+  }
+
+  .additional-image-item {
+    /* Adjust thumbnail layout: 2 columns */
+    flex-basis: calc(50% - 10px);
+    /* OR uncomment below for 1 column layout */
+    /* flex-basis: 100%; */
+
+    height: auto;      /* CRITICAL: Remove fixed height */
+    /* Existing background-color is fine */
+  }
+
+  .additional-image-item img {
+    /* Ensure image scales correctly */
+    width: 100%;
+    height: auto;      /* CRITICAL: Let height adjust to maintain aspect ratio */
+    object-fit: contain; /* Show the whole image without cropping/distortion */
+    /* OR remove object-fit entirely if 'contain' isn't desired: */
+    /* object-fit: initial; */
+  }
+
+} /* --- End of @media query --- */
