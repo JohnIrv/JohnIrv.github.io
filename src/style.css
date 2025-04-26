@@ -219,6 +219,7 @@ body {
     overflow-y: auto;   /* Keep vertical scrolling */
     padding: 15px;      /* Adjust padding for smaller screen */
     text-align: left;   /* Align text to left by default on mobile */
+    overscroll-behavior-y: contain;
   }
 
   /* Re-center specific block elements if needed */
