@@ -177,10 +177,77 @@ body {
 #tooltip { position: absolute; display: none; padding: 5px 10px; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); border:1px solid black; border-radius: 1px; font-family: "Lucida Console", monospace; font-size: 12px; white-space: nowrap; pointer-events: none; z-index: 1001; }
 
 /* --- Lightbox Styles --- */
-#lightbox-overlay { z-index: 1010; display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.85); cursor: pointer; padding: 30px; box-sizing: border-box; display: flex; justify-content: center; align-items: center; }
-#lightbox-image { display: block; max-width: 90%; max-height: 90%; object-fit: contain; cursor: default; }
-#lightbox-close { z-index: 1011; position: absolute; top: 15px; right: 25px; font-size: 2.5em; color: #fff; cursor: pointer; line-height: 1; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
+#lightbox-overlay {
+    z-index: 1010;
+    display: none; /* Changed by JS */
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    cursor: pointer;
+    padding: 30px;
+    box-sizing: border-box;
+    display: flex; /* Use flex for centering */
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- Adjust Lightbox Image --- */
+#lightbox-image {
+    display: block;
+    /* max-width: 90%; original */
+    max-width: 80%; /* Reduce slightly to give buttons more space */
+    max-height: 90%;
+    object-fit: contain;
+    cursor: default; /* Default cursor on image itself */
+}
+
+#lightbox-close {
+    z-index: 1012; /* Ensure close is above nav */
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 2.5em;
+    color: #fff;
+    cursor: pointer;
+    line-height: 1;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
 #lightbox-close:hover { color: #ccc; }
+
+/* --- NEW: Lightbox Navigation Buttons --- */
+.lightbox-nav {
+    position: absolute; /* Position relative to the overlay */
+    top: 50%;           /* Center vertically */
+    transform: translateY(-50%);
+    font-size: 2.5em;   /* Similar size to close button */
+    font-family: Consolas, Monaco, "Lucida Console", monospace; /* Match UI font */
+    color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+    background-color: rgba(0, 0, 0, 0.2); /* Optional: slight background */
+    border-radius: 5px; /* Optional: rounded corners */
+    cursor: pointer;
+    z-index: 1011;      /* Above image, below close button */
+    padding: 5px 15px;  /* Add some padding */
+    user-select: none;  /* Prevent text selection */
+    -webkit-user-select: none;
+    display: none;      /* Hide by default; JS will show them */
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.lightbox-nav:hover {
+    color: rgba(255, 255, 255, 1.0);   /* Fully opaque white */
+    background-color: rgba(0, 0, 0, 0.4); /* Darker background on hover */
+}
+
+/* Position Previous Button */
+#lightbox-prev {
+    left: 15px; /* Distance from left edge */
+}
+
+/* Position Next Button */
+#lightbox-next {
+    right: 15px; /* Distance from right edge */
+}
+
 
 /* Apply styles for screens 600px wide or less */
 @media (max-width: 600px) {
@@ -269,7 +336,7 @@ body {
 
 } /* --- End of @media query --- */
 
-/* Add this anywhere in style.css (outside media queries) */
+/* Class added via JS to prevent body scroll when modal is open */
 body.modal-open-no-scroll {
   overflow: hidden;
 }
