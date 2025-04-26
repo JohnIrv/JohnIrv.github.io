@@ -38,13 +38,13 @@ body {
   animation-play-state: paused;
 }
 
-/* --- Styles for the INCworks link within the ticker --- */
+/* --- Styles for the link within the ticker --- */
 #ticker-text-content a.ticker-link,
 #ticker-text-content a.ticker-link:visited {
     text-decoration: underline;
     text-decoration-color: black;
     text-decoration-thickness: 1px;
-    color: inherit; /* Let spans control specific INCworks colors */
+    color: inherit; /* Let spans control specific colors */
 }
 
 /* Specific colors for INCworks parts */
@@ -64,36 +64,19 @@ body {
 #ticker-text-content a.ticker-link:visited .ticker-link-works {
     color: black;
 }
-/* Optional: Hover effect for the INCworks link */
+
+/* --- ADDED: Specific style for the @__johnirving handle --- */
+#ticker-text-content a.ticker-link .ticker-link-handle,
+#ticker-text-content a.ticker-link:visited .ticker-link-handle {
+    color: black; /* Force this part to be black */
+}
+/* --- End Add --- */
+
+/* Optional: Hover effect for the link */
 #ticker-text-content a.ticker-link:hover {
     /* text-decoration-color: darkgrey; */
 }
-/* --- End INCworks Link Styles --- */
-
-
-/* --- REMOVE Unused Span Rule --- */
-/*
-#ticker-text-content a.ticker-link .ticker-link-handle,
-#ticker-text-content a.ticker-link:visited .ticker-link-handle {
-    color: black;
-}
-*/
-/* --- End Remove --- */
-
-
-/* --- ADDED: Specific style for the @__johnirving handle link --- */
-#ticker-text-content a.ticker-handle-link,
-#ticker-text-content a.ticker-handle-link:visited {
-    color: black; /* Force this link text to be black */
-    text-decoration: underline; /* Match underline style */
-    text-decoration-color: black;
-    text-decoration-thickness: 1px;
-}
-/* Optional: Hover effect for the handle link */
-#ticker-text-content a.ticker-handle-link:hover {
-     /* text-decoration-color: darkgrey; */
-}
-/* --- End Handle Link Styles --- */
+/* --- End Link Styles --- */
 
 /* --- End Ticker Styles --- */
 
