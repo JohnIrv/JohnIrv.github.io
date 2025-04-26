@@ -1,11 +1,7 @@
 // src/index.js
 // Main application file for the portfolio.
-// Displays a masonry-like column layout of randomly ordered images via CSS.
-// Dynamically populates a static name ticker based on screen width using JS.
-// Clicking grid images attempts to open the corresponding project modal.
-// Handles modal display and lightbox functionality (modal images only).
-// Handles minimizing/maximizing the project list modal.
-// VERSION: CSS Columns Background + Static JS Ticker Population + Random Grid Order + List Modal Bottom Left + List Modal Minimize + Drag Fix v2 + List Drag Removed + Ticker Animation JS + Styled Ticker Link + JS Body Scroll Lock + Lightbox Buttons
+// ... (Version comment updated) ...
+// VERSION: ... + Lightbox Buttons Below Image
 
 import './style.css'; // Import CSS
 import { PROJECTS } from './constants.js';
@@ -29,8 +25,8 @@ const allImagePaths = [ /* Ensure your full list is here */
 let modalContainerElement = null, modalContentElement = null, modalCloseBtnElement = null, modalHeaderElement = null;
 let projectListContainerElement = null, projectListHeaderElement = null, projectListContentElement = null, projectListMinimizeBtnElement = null;
 let lightboxOverlay = null, lightboxImage = null, lightboxClose = null;
-let lightboxPrevBtn = null, lightboxNextBtn = null; // <<< ADDED Lightbox Button Vars
-let isDragging = false; // Note: Currently only used for detail modal dragging logic below
+let lightboxPrevBtn = null, lightboxNextBtn = null; // Lightbox Button Vars
+let isDragging = false;
 let currentLightboxImages = [];
 let currentLightboxIndex = 0;
 let currentlyDisplayedProjectIndex = -1;
@@ -52,25 +48,20 @@ function attachDragHandlers(headerElement, modalElement) {
     let specificDragOffsetX, specificDragOffsetY; let elementBeingDragged = null;
 
     const onDragStart = (e) => {
-        // Prevent drag start on known control buttons
-        if (e.target.id === 'modal-close-btn') { // Only need to check detail modal close here
-            return;
-        }
-        if (e.target.closest('#lightbox-overlay')) return; // Prevent drag if starting on lightbox
+        if (e.target.id === 'modal-close-btn') return;
+        if (e.target.closest('#lightbox-overlay')) return;
 
         elementBeingDragged = modalElement;
         elementBeingDragged.style.cursor = 'grabbing';
-        try { elementBeingDragged.offsetHeight; } catch(e) {} // Force reflow for cursor change
+        try { elementBeingDragged.offsetHeight; } catch(e) {}
 
         const rect = elementBeingDragged.getBoundingClientRect();
         specificDragOffsetX = e.clientX - rect.left; specificDragOffsetY = e.clientY - rect.top;
 
-        // Let's NOT set inline width/height on drag start if it might conflict with mobile CSS
-        // elementBeingDragged.style.width = computedStyle.width;
-        // elementBeingDragged.style.height = computedStyle.height;
-
-        elementBeingDragged.style.transform = 'none'; // Use top/left positioning
-        elementBeingDragged.style.left = `${rect.left}px`; elementBeingDragged.style.top = `${rect.top}px`;
+        // Reset transform only if using top/left positioning for drag
+        elementBeingDragged.style.transform = 'none';
+        elementBeingDragged.style.left = `${rect.left}px`;
+        elementBeingDragged.style.top = `${rect.top}px`;
 
         window.addEventListener('mousemove', specificOnDragMove); window.addEventListener('mouseup', specificOnDragEnd);
         e.preventDefault(); e.stopPropagation();
@@ -83,7 +74,7 @@ function attachDragHandlers(headerElement, modalElement) {
     };
     const specificOnDragEnd = () => {
         if (!elementBeingDragged) return;
-        elementBeingDragged.style.cursor = ''; // Reset cursor
+        elementBeingDragged.style.cursor = '';
         elementBeingDragged = null;
         window.removeEventListener('mousemove', specificOnDragMove); window.removeEventListener('mouseup', specificOnDragEnd);
     };
@@ -95,15 +86,12 @@ function attachDragHandlers(headerElement, modalElement) {
 // --- Lightbox Functions ---
 function hideLightbox() {
     if (lightboxOverlay) { lightboxOverlay.style.display = 'none'; lightboxImage.src = ''; }
-    // <<< ADDED: Ensure buttons are hidden >>>
-    if(lightboxPrevBtn) lightboxPrevBtn.style.display = 'none';
-    if(lightboxNextBtn) lightboxNextBtn.style.display = 'none';
+    if(lightboxPrevBtn) lightboxPrevBtn.style.display = 'none'; // Ensure buttons hidden
+    if(lightboxNextBtn) lightboxNextBtn.style.display = 'none'; // Ensure buttons hidden
     currentLightboxImages = []; currentLightboxIndex = 0; console.log("Lightbox hidden");
-    // Note: Closing lightbox does NOT remove body scroll lock if modal is still open
 }
 
 function showLightboxImage(index) {
-    // <<< ADDED: Check for nav buttons too >>>
     if (!lightboxOverlay || !lightboxImage || !lightboxPrevBtn || !lightboxNextBtn) {
          console.error("Lightbox elements missing.");
          hideLightbox(); return;
@@ -118,13 +106,11 @@ function showLightboxImage(index) {
     console.log(`Showing lightbox image index: ${currentLightboxIndex}, src: ${lightboxImage.src}`);
     lightboxOverlay.style.display = 'flex';
 
-    // <<< ADDED: Show/hide navigation buttons >>>
+    // Show/hide navigation buttons
     if (currentLightboxImages.length > 1) {
-        // More than one image, show buttons
-        lightboxPrevBtn.style.display = 'block';
-        lightboxNextBtn.style.display = 'block';
+        lightboxPrevBtn.style.display = 'inline-block'; // <<< CHANGED to inline-block
+        lightboxNextBtn.style.display = 'inline-block'; // <<< CHANGED to inline-block
     } else {
-        // Only one image (or none), hide buttons
         lightboxPrevBtn.style.display = 'none';
         lightboxNextBtn.style.display = 'none';
     }
@@ -133,13 +119,13 @@ function showLightboxImage(index) {
 function navigateLightbox(direction) {
      if (!currentLightboxImages || !Array.isArray(currentLightboxImages) || currentLightboxImages.length <= 1) return;
     let newIndex = currentLightboxIndex + direction;
-    if (newIndex < 0) { newIndex = currentLightboxImages.length - 1; } // Wrap around (start)
-    else if (newIndex >= currentLightboxImages.length) { newIndex = 0; } // Wrap around (end)
+    if (newIndex < 0) { newIndex = currentLightboxImages.length - 1; }
+    else if (newIndex >= currentLightboxImages.length) { newIndex = 0; }
     showLightboxImage(newIndex);
 }
 
 function handleLightboxKeys(event) {
-    if (!lightboxOverlay || lightboxOverlay.style.display === 'none') return; // Only act if lightbox is visible
+    if (!lightboxOverlay || lightboxOverlay.style.display === 'none') return;
     switch (event.key) {
         case 'ArrowRight': case 'ArrowDown': navigateLightbox(1); break;
         case 'ArrowLeft': case 'ArrowUp': navigateLightbox(-1); break;
@@ -170,7 +156,7 @@ function findProjectIndexForImage(imageSrc) {
     const projectIndex = PROJECTS.findIndex((project) => {
          const normalize = (p) => p ? p.toLowerCase() : null;
          let matchFound = false;
-         const imageUrl = normalize(project.imageUrl); // Check primary image first if it exists
+         const imageUrl = normalize(project.imageUrl);
          if (imageUrl && imageUrl === relativeClickedPath) { matchFound = true; }
          const centerpieceImages = project.centerpieceImages?.map(normalize);
          if (!matchFound && centerpieceImages) { matchFound = centerpieceImages.some(p => p === relativeClickedPath); }
@@ -188,43 +174,37 @@ function populateTickerText() {
     const tickerTextElement = document.getElementById('ticker-text-content');
 
     if (tickerBandElement && tickerTextElement) {
-        // Define nameUnit with spans for styling
         const nameUnit = "John Irving is an artist and animator who lives and works in NYC. He is a cofounder of <a href='https://incworks.studio' target='_blank' rel='noopener noreferrer' class='ticker-link'><span class='ticker-link-i'>I</span><span class='ticker-link-n'>N</span><span class='ticker-link-c'>C</span><span class='ticker-link-works'>works</span></a> studio. He can be reached at: johnlmirving@gmail.com OR <a href='https://www.instagram.com/__johnirving/' target='_blank' rel='noopener noreferrer' class='ticker-link'>@__johnirving</a>\u00A0\u00A0\u00A0";
-        // Define the text-only version for width calculation
         const nameUnitTextOnly = "John Irving is an artist and animator who lives and works in NYC. He is a cofounder of INCworks studio. He can be reached at: johnlmirving@gmail.com OR @__johnirving\u00A0\u00A0\u00A0";
-
         let unitWidth = 0;
-
-        // Measure width accurately using a temporary element with text only
         const tempSpan = document.createElement('span');
         try {
             tempSpan.style.visibility = 'hidden'; tempSpan.style.position = 'absolute'; tempSpan.style.whiteSpace = 'nowrap';
             const tickerStyle = window.getComputedStyle(tickerBandElement); const textStyle = window.getComputedStyle(tickerTextElement);
             tempSpan.style.fontFamily = textStyle.fontFamily || tickerStyle.fontFamily; tempSpan.style.fontSize = textStyle.fontSize || tickerStyle.fontSize; tempSpan.style.letterSpacing = textStyle.letterSpacing || '1px';
-            tempSpan.textContent = nameUnitTextOnly; // Use text only version for measurement
+            tempSpan.textContent = nameUnitTextOnly;
             document.body.appendChild(tempSpan); unitWidth = tempSpan.offsetWidth;
         } catch (e) { console.error("Error measuring text width:", e);
         } finally { if (tempSpan.parentNode === document.body) { document.body.removeChild(tempSpan); } }
 
         if (unitWidth > 0) {
             const screenWidth = window.innerWidth;
-            const repeatsNeeded = Math.ceil(screenWidth / unitWidth) + 2; // Need enough for animation buffer
+            const repeatsNeeded = Math.ceil(screenWidth / unitWidth) + 2;
             const singleTextSegment = nameUnit.repeat(repeatsNeeded);
-            const fullTextForAnimation = singleTextSegment + singleTextSegment; // Double for seamless loop
-
+            const fullTextForAnimation = singleTextSegment + singleTextSegment;
             if (tickerTextElement.innerHTML !== fullTextForAnimation) {
-                 tickerTextElement.innerHTML = fullTextForAnimation; // Use innerHTML
+                 tickerTextElement.innerHTML = fullTextForAnimation;
                  console.log(`Ticker Text Updated: Unit width ${unitWidth}px, needed ${repeatsNeeded} repeats per segment.`);
             }
         } else {
             console.error("Ticker Text: Could not calculate unit width. Using fallback.");
-            const fallbackSegment = (nameUnit).repeat(30); // Repeat the HTML version
+            const fallbackSegment = (nameUnit).repeat(30);
             if (!tickerTextElement.innerHTML.startsWith(fallbackSegment)) {
-                 tickerTextElement.innerHTML = fallbackSegment + fallbackSegment; // Use innerHTML
+                 tickerTextElement.innerHTML = fallbackSegment + fallbackSegment;
             }
         }
     } else {
-        console.warn("Ticker elements (#name-ticker-band, #ticker-text-content) not found for dynamic population.");
+        console.warn("Ticker elements (#name-ticker-band, #ticker-text-content) not found.");
     }
 }
 // --- End Ticker Text Population ---
@@ -234,13 +214,10 @@ function toggleProjectListMinimize() {
     if (!projectListContainerElement || !projectListMinimizeBtnElement || !projectListHeaderElement) {
         console.error("Cannot toggle minimize: required elements missing."); return;
     }
-    projectListContainerElement.style.height = ''; // Clear inline height if set
+    projectListContainerElement.style.height = '';
     const isMinimized = projectListContainerElement.classList.toggle('minimized');
-    if (isMinimized) {
-        projectListMinimizeBtnElement.textContent = '+'; console.log("Project list minimized.");
-    } else {
-        projectListMinimizeBtnElement.textContent = '-'; console.log("Project list maximized.");
-    }
+    projectListMinimizeBtnElement.textContent = isMinimized ? '+' : '-';
+    console.log(`Project list ${isMinimized ? 'minimized' : 'maximized'}.`);
 }
 // --- End Toggle Project List Minimize State ---
 
@@ -260,36 +237,35 @@ window.addEventListener('DOMContentLoaded', () => {
     lightboxOverlay = document.getElementById('lightbox-overlay');
     lightboxImage = document.getElementById('lightbox-image');
     lightboxClose = document.getElementById('lightbox-close');
-    lightboxPrevBtn = document.getElementById('lightbox-prev'); // <<< GET PREV BUTTON
-    lightboxNextBtn = document.getElementById('lightbox-next'); // <<< GET NEXT BUTTON
+    lightboxPrevBtn = document.getElementById('lightbox-prev'); // Get Prev Button
+    lightboxNextBtn = document.getElementById('lightbox-next'); // Get Next Button
     const imageContainer = document.getElementById('image-grid-background');
     const tickerBandElement = document.getElementById('name-ticker-band');
 
     // Ticker setup
-    populateTickerText(); // Initial population
+    populateTickerText();
     let resizeTimer;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
             console.log("Window resized, repopulating ticker text...");
-            populateTickerText(); // Repopulate on resize
+            populateTickerText();
             if (tickerBandElement) adjustLayout(tickerBandElement, imageContainer, projectListContainerElement);
         }, 250);
     });
 
-    // Layout Adjustment (Pushes grid below ticker)
+    // Layout Adjustment
     const adjustLayout = (tickerBand, imgContainer, listContainer) => {
-         if (tickerBand) {
-             const tickerHeight = tickerBand.offsetHeight;
-             if (tickerHeight > 0) {
-                 const desiredGap = 10;
-                 if (imgContainer) { imgContainer.style.paddingTop = `${tickerHeight + desiredGap}px`; }
-                 else { console.warn("Image container not found for padding adjustment."); }
-                 if (!listContainer) { console.warn("Project list container not found during layout adjustment."); }
-             } else { console.warn("Ticker band height is 0, layout not adjusted."); }
-         } else { console.warn("Ticker band not found for layout adjustments."); }
+         if (!tickerBand) { console.warn("Ticker band not found for layout adjustments."); return; }
+         const tickerHeight = tickerBand.offsetHeight;
+         if (tickerHeight > 0) {
+             const desiredGap = 10;
+             if (imgContainer) { imgContainer.style.paddingTop = `${tickerHeight + desiredGap}px`; }
+             else { console.warn("Image container not found for padding adjustment."); }
+             if (!listContainer) { console.warn("Project list container not found during layout adjustment."); }
+         } else { console.warn("Ticker band height is 0, layout not adjusted."); }
     };
-    setTimeout(() => adjustLayout(tickerBandElement, imageContainer, projectListContainerElement), 150); // Adjust layout shortly after load
+    setTimeout(() => adjustLayout(tickerBandElement, imageContainer, projectListContainerElement), 150);
 
     // Populate Image Grid
     if (imageContainer) {
@@ -302,71 +278,56 @@ window.addEventListener('DOMContentLoaded', () => {
             allImagePaths.forEach((imgPath, index) => {
                  const img = document.createElement('img');
                  img.src = imgPath;
-                 const fileName = imgPath.substring(imgPath.lastIndexOf('/') + 1);
-                 img.alt = `Portfolio image: ${fileName}`;
+                 img.alt = `Portfolio image: ${imgPath.substring(imgPath.lastIndexOf('/') + 1)}`;
                  img.loading = 'lazy';
                  img.dataset.index = index;
                  imageContainer.appendChild(img);
             });
             console.log(`Appended ${allImagePaths.length} images in random order.`);
-            // Add listener to grid container for image clicks
             imageContainer.addEventListener('click', (event) => {
                 if (event.target.tagName === 'IMG' && event.target.src) {
-                    const clickedImageSrc = event.target.src;
-                    console.log("--- Grid Image Clicked ---");
-                    const projectIndex = findProjectIndexForImage(clickedImageSrc);
+                    const projectIndex = findProjectIndexForImage(event.target.src);
                     if (projectIndex !== -1) {
-                        console.log(`>>> Action: Opening modal for project index ${projectIndex}.`);
+                        console.log(`Grid Click: Opening modal for project index ${projectIndex}.`);
                         openOrUpdateDetailModal(projectIndex);
                         event.stopPropagation();
-                    } else {
-                        console.log(">>> Action: No project found for this grid image.");
-                    }
-                    console.log("--- End Grid Image Click ---");
+                    } else { console.log("Grid Click: No project found."); }
                 }
             });
         }
     } else { console.error("Image container '#image-grid-background' not found!"); }
 
-    // --- Modal Setup ---
-    // Detail Modal Setup (Draggable)
+    // Modal Setup (Detail)
     if (modalContainerElement && modalContentElement && modalCloseBtnElement) {
-        // Close Button Listener
         modalCloseBtnElement.addEventListener('click', () => {
             if (modalContainerElement) {
                 modalContainerElement.style.display = 'none';
-                document.body.classList.remove('modal-open-no-scroll'); // Remove body scroll lock
+                document.body.classList.remove('modal-open-no-scroll');
             }
         });
-        // Attach drag handler ONLY to the detail modal header
         if(modalHeaderElement) {
             attachDragHandlers(modalHeaderElement, modalContainerElement);
-            console.log("Attached drag handler to Detail Modal");
         } else { console.warn("Detail modal header not found for dragging!");}
-        // Listener for lightbox triggers inside detail modal content
-        modalContentElement.addEventListener('click', (event) => {
+        modalContentElement.addEventListener('click', (event) => { // Listener for clicks inside modal content
             let imageIndex = -1; let sourceType = null;
-            const imageItemWrapper = event.target.closest('.additional-image-item');
-            if (imageItemWrapper) {
-                const imgElement = imageItemWrapper.querySelector('img');
-                if (imgElement?.dataset.index !== undefined) { imageIndex = parseInt(imgElement.dataset.index, 10); sourceType = 'additional'; }
-            }
-            if (sourceType === null) {
-                const centerpieceImgElement = event.target.closest('.centerpiece-images-container img.lightbox-trigger');
-                if (centerpieceImgElement?.dataset.index !== undefined) { imageIndex = parseInt(centerpieceImgElement.dataset.index, 10); sourceType = 'centerpiece'; }
+            const addImgItem = event.target.closest('.additional-image-item');
+            if (addImgItem) {
+                 const imgEl = addImgItem.querySelector('img');
+                 if(imgEl?.dataset.index) { imageIndex = parseInt(imgEl.dataset.index, 10); sourceType = 'additional'; }
+            } else {
+                 const centerImgEl = event.target.closest('.centerpiece-images-container img.lightbox-trigger');
+                 if(centerImgEl?.dataset.index) { imageIndex = parseInt(centerImgEl.dataset.index, 10); sourceType = 'centerpiece'; }
             }
             if (sourceType !== null && !isNaN(imageIndex) && currentlyDisplayedProjectIndex !== -1) {
                 openLightbox(currentlyDisplayedProjectIndex, imageIndex, sourceType);
-            } else if (sourceType !== null) { console.warn("Lightbox click (modal): Could not parse index or project index invalid."); }
+            } else if (sourceType !== null) { console.warn("Lightbox trigger click: Invalid index or project."); }
         });
-    } else { console.warn("Detail modal elements not found! Cannot attach listeners.");}
+    } else { console.warn("Detail modal elements missing!");}
 
-    // Project List Modal Setup (NOT Draggable)
+    // Modal Setup (Project List)
     if (projectListContainerElement && projectListHeaderElement && projectListContentElement) {
-        console.log('Populating and attaching handlers to list modal...');
         populateProjectList();
         console.log("Drag handler NOT attached to Project List Modal");
-        // Listener for project links inside list modal
         projectListContentElement.addEventListener('click', (event) => {
             const link = event.target.closest('a.project-list-link');
             if (link?.dataset.index) {
@@ -375,50 +336,27 @@ window.addEventListener('DOMContentLoaded', () => {
                 if (!isNaN(projectIndex)) { openOrUpdateDetailModal(projectIndex); }
             }
         });
-        // Add listener for the minimize button
         if (projectListMinimizeBtnElement) {
              projectListMinimizeBtnElement.addEventListener('click', (event) => {
-                 event.stopPropagation();
-                 toggleProjectListMinimize();
+                 event.stopPropagation(); toggleProjectListMinimize();
              });
         } else { console.warn("Minimize button for project list not found!"); }
-    } else { console.warn("Skipping list modal setup - elements not found."); }
+    } else { console.warn("Project list modal elements missing!"); }
 
-    // Initial styling for modals
-    if (modalContainerElement) { modalContainerElement.style.display = 'none'; } else { console.warn("Detail modal container not found."); }
+    // Initial Modal States
+    if (modalContainerElement) modalContainerElement.style.display = 'none';
     if (projectListContainerElement) {
         try { projectListContainerElement.style.display = 'flex'; projectListContainerElement.style.visibility = 'visible'; projectListContainerElement.style.opacity = '1'; } catch(e) { console.error("Error setting initial list modal styles:", e); }
-    } else { console.error("Project List Container Element NOT FOUND!"); }
+    } else { console.error("Project List Container NOT FOUND!"); }
 
     // Lightbox Setup
-    // <<< MODIFIED check to include new buttons >>>
     if (lightboxOverlay && lightboxImage && lightboxClose && lightboxPrevBtn && lightboxNextBtn) {
-        // Existing listener for Close button
-        lightboxClose.addEventListener('click', (event) => {
-            hideLightbox();
-            event.stopPropagation();
-        });
-        // Existing listener for Overlay click
-        lightboxOverlay.addEventListener('click', (event) => {
-            if (event.target === lightboxOverlay) { // Click on overlay background
-                hideLightbox();
-                event.stopPropagation();
-            }
-        });
-        // <<< ADDED NEW LISTENERS FOR NAV BUTTONS >>>
-        lightboxPrevBtn.addEventListener('click', (event) => {
-            navigateLightbox(-1); // Navigate to previous image
-            event.stopPropagation(); // IMPORTANT: Prevent click from closing lightbox
-        });
-        lightboxNextBtn.addEventListener('click', (event) => {
-            navigateLightbox(1);  // Navigate to next image
-            event.stopPropagation(); // IMPORTANT: Prevent click from closing lightbox
-        });
-    } else {
-        console.error("Lightbox elements (overlay, image, close, prev, next) not found! Cannot attach listeners.");
-    }
-    // Existing listener for keyboard navigation
-    window.addEventListener('keydown', handleLightboxKeys);
+        lightboxClose.addEventListener('click', (event) => { hideLightbox(); event.stopPropagation(); });
+        lightboxOverlay.addEventListener('click', (event) => { if (event.target === lightboxOverlay) { hideLightbox(); event.stopPropagation(); }});
+        lightboxPrevBtn.addEventListener('click', (event) => { navigateLightbox(-1); event.stopPropagation(); }); // Added listener
+        lightboxNextBtn.addEventListener('click', (event) => { navigateLightbox(1); event.stopPropagation(); }); // Added listener
+    } else { console.error("Lightbox elements (incl. nav buttons) not found!"); }
+    window.addEventListener('keydown', handleLightboxKeys); // Keyboard listener
 
     console.log('DOM setup complete.');
 }); // End DOMContentLoaded
@@ -440,7 +378,6 @@ function openOrUpdateDetailModal(projectIndex) {
     if (projectIndex !== undefined && projectIndex >= 0 && projectIndex < PROJECTS.length) {
         currentlyDisplayedProjectIndex = projectIndex;
         const projectData = PROJECTS[projectIndex];
-        // Construct modal content HTML (Ensuring .slice(0, 3) is present)
         modalContentElement.innerHTML = `
             <h2>${projectData.title}</h2>
             ${projectData.subtitle ? `<p class="modal-subtitle">${projectData.subtitle}</p>` : ''}
@@ -454,21 +391,18 @@ function openOrUpdateDetailModal(projectIndex) {
             ${projectData.technologies?.length ? `<div class="modal-tech"><strong>Technologies:</strong><ul>${projectData.technologies.map(tech => `<li>${tech}</li>`).join('')}</ul></div>` : ''}
             ${projectData.url && projectData.url !== '#' ? `<p class="modal-link"><strong>Link:</strong> <a href="${projectData.url}" target="_blank" rel="noopener noreferrer">View Project</a></p>` : ''}
         `;
-        // Reset modal position and size for consistent opening behavior
         modalContainerElement.style.width = ''; modalContainerElement.style.height = '';
         modalContainerElement.style.top = '50%'; modalContainerElement.style.left = '50%';
         modalContainerElement.style.transform = 'translate(-50%, -50%)';
-        modalContentElement.scrollTop = 0; // Scroll modal content to top
-        // Add class to body BEFORE showing modal to prevent background scroll
+        modalContentElement.scrollTop = 0;
         document.body.classList.add('modal-open-no-scroll');
-        modalContainerElement.style.display = 'block'; // Show the modal
+        modalContainerElement.style.display = 'block';
     } else {
         console.warn("Invalid projectIndex for detail modal:", projectIndex);
         currentlyDisplayedProjectIndex = -1;
-        document.body.classList.remove('modal-open-no-scroll'); // Ensure scroll lock removed on error
+        document.body.classList.remove('modal-open-no-scroll');
     }
 }
-
 
 // --- Background Click Logic ---
 document.addEventListener('click', (event) => {
@@ -477,12 +411,11 @@ document.addEventListener('click', (event) => {
     const clickedLightbox = event.target.closest('#lightbox-overlay');
     const isLightboxVisible = lightboxOverlay && lightboxOverlay.style.display !== 'none';
 
-    // Only close the detail modal if the click is outside relevant elements
     if (!clickedDetailModal && !clickedProjectList && (!isLightboxVisible || !clickedLightbox)) {
         if (modalContainerElement && modalContainerElement.style.display !== 'none') {
             console.log("Background click detected, closing detail modal.");
             modalContainerElement.style.display = 'none';
-            document.body.classList.remove('modal-open-no-scroll'); // Remove scroll lock
+            document.body.classList.remove('modal-open-no-scroll');
         }
     }
 });

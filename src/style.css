@@ -179,30 +179,33 @@ body {
 /* --- Lightbox Styles --- */
 #lightbox-overlay {
     z-index: 1010;
-    display: none; /* Changed by JS */
+    /* display: none; */ /* JS handles this */
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background-color: rgba(0, 0, 0, 0.85);
-    cursor: pointer;
-    padding: 30px;
+    cursor: pointer; /* Cursor for closing by clicking overlay */
+    padding: 20px; /* Adjust padding if needed */
     box-sizing: border-box;
-    display: flex; /* Use flex for centering */
+    display: flex;
+    flex-direction: column; /* MODIFIED: Stack image and buttons vertically */
     justify-content: center;
     align-items: center;
 }
 
-/* --- Adjust Lightbox Image --- */
+/* --- Lightbox Image --- */
 #lightbox-image {
     display: block;
-    /* max-width: 90%; original */
-    max-width: 80%; /* Reduce slightly to give buttons more space */
-    max-height: 90%;
+    max-width: 90%; /* Can likely go back to 90% */
+    max-height: 85%; /* MODIFIED: Reduce slightly to ensure buttons fit below */
     object-fit: contain;
-    cursor: default; /* Default cursor on image itself */
+    cursor: default;
+    /* Add bottom margin to push button container down */
+    margin-bottom: 10px; /* Adjust as needed */
 }
 
 #lightbox-close {
-    z-index: 1012; /* Ensure close is above nav */
+    /* Keep existing styles (z-index 1012, position absolute top right etc) */
+    z-index: 1012;
     position: absolute;
     top: 15px;
     right: 25px;
@@ -214,39 +217,47 @@ body {
 }
 #lightbox-close:hover { color: #ccc; }
 
-/* --- NEW: Lightbox Navigation Buttons --- */
+/* --- NEW: Lightbox Navigation Button Container --- */
+#lightbox-nav-container {
+    width: 100%; /* Take full width to allow centering */
+    text-align: center; /* Center the inline-block buttons */
+    position: relative; /* Keep content flow */
+    flex-shrink: 0; /* Prevent container from shrinking */
+}
+
+/* --- Lightbox Navigation Buttons --- */
 .lightbox-nav {
-    position: absolute; /* Position relative to the overlay */
-    top: 50%;           /* Center vertically */
-    transform: translateY(-50%);
-    font-size: 2.5em;   /* Similar size to close button */
-    font-family: Consolas, Monaco, "Lucida Console", monospace; /* Match UI font */
-    color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
-    background-color: rgba(0, 0, 0, 0.2); /* Optional: slight background */
-    border-radius: 5px; /* Optional: rounded corners */
+    /* REMOVED absolute positioning styles */
+    /* position: absolute; */
+    /* top: 50%; */
+    /* transform: translateY(-50%); */
+
+    /* Keep appearance styles */
+    font-size: 2.5em;
+    font-family: Consolas, Monaco, "Lucida Console", monospace;
+    color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
     cursor: pointer;
-    z-index: 1011;      /* Above image, below close button */
-    padding: 5px 15px;  /* Add some padding */
-    user-select: none;  /* Prevent text selection */
+    z-index: 1011; /* Still relevant if overlapping could occur */
+    padding: 5px 15px;
+    user-select: none;
     -webkit-user-select: none;
-    display: none;      /* Hide by default; JS will show them */
+    display: none; /* JS will change this to inline-block */
     transition: color 0.2s ease, background-color 0.2s ease;
+
+    /* ADD horizontal margin for spacing */
+    margin: 0 10px;
 }
 
 .lightbox-nav:hover {
-    color: rgba(255, 255, 255, 1.0);   /* Fully opaque white */
-    background-color: rgba(0, 0, 0, 0.4); /* Darker background on hover */
+    color: rgba(255, 255, 255, 1.0);
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
-/* Position Previous Button */
-#lightbox-prev {
-    left: 15px; /* Distance from left edge */
-}
-
-/* Position Next Button */
-#lightbox-next {
-    right: 15px; /* Distance from right edge */
-}
+/* REMOVED specific left/right positioning rules */
+/* #lightbox-prev { left: 15px; } */
+/* #lightbox-next { right: 15px; } */
 
 
 /* Apply styles for screens 600px wide or less */
@@ -275,25 +286,24 @@ body {
     top: 0;           /* Stick to the top */
     background-color: white; /* Ensure background for overlap */
     z-index: 1;       /* Keep header above content */
-    /* Existing padding, border-bottom, and close button styles remain */
   }
 
   /* --- Modal Content (Mobile) --- */
   #modal-content {
     max-width: none;    /* Remove desktop max-width limit */
     /* flex-grow: 1; */    /* Removed flex-grow */
-    height: calc(100vh - 40px); /* ADDED: Explicit height (adjust 40px if header is different) */
+    height: calc(100vh - 40px); /* Explicit height (adjust 40px if header is different) */
     max-height: none;   /* Remove desktop max-height limit */
     overflow-y: auto;   /* Keep vertical scrolling */
     padding: 15px;      /* Adjust padding slightly if needed */
     text-align: left;   /* Align text to left by default on mobile */
     touch-action: pan-y; /* Keep touch action hint */
-    -webkit-overflow-scrolling: touch; /* ADDED: For momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch; /* For momentum scrolling on iOS */
   }
 
   /* Re-center specific block elements if needed */
    #modal-content h2,
-   #modal-content > p.modal-subtitle, /* Keep subtitle centered if desired */
+   #modal-content > p.modal-subtitle,
    .modal-image-container img,
    .video-wrapper,
    .centerpiece-images-container img,
@@ -311,28 +321,32 @@ body {
 
   /* --- Additional Image Thumbnails (Mobile) --- */
   .additional-images-container {
-    /* Center items if space allows (e.g., if switching to 1 column) */
     justify-content: center;
   }
 
   .additional-image-item {
-    /* Adjust thumbnail layout: 2 columns */
-    flex-basis: calc(50% - 10px);
-    /* OR uncomment below for 1 column layout */
-    /* flex-basis: 100%; */
-
+    flex-basis: calc(50% - 10px); /* Two columns */
     height: auto;      /* CRITICAL: Remove fixed height */
-    /* Existing background-color is fine */
   }
 
   .additional-image-item img {
-    /* Ensure image scales correctly */
     width: 100%;
-    height: auto;      /* CRITICAL: Let height adjust to maintain aspect ratio */
-    object-fit: contain; /* Show the whole image without cropping/distortion */
-    /* OR remove object-fit entirely if 'contain' isn't desired: */
-    /* object-fit: initial; */
+    height: auto;      /* CRITICAL: Let height adjust */
+    object-fit: contain; /* Show the whole image */
   }
+
+  /* --- Mobile Lightbox Adjustments --- */
+  #lightbox-image {
+      max-height: 80%; /* Maybe reduce height further on mobile */
+  }
+  #lightbox-nav-container {
+       margin-top: 10px; /* Slightly less margin on mobile */
+  }
+   .lightbox-nav {
+      font-size: 2.2em; /* Slightly smaller buttons on mobile */
+      padding: 5px 12px;
+   }
+
 
 } /* --- End of @media query --- */
 
