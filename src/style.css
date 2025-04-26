@@ -198,7 +198,7 @@ body {
     border-radius: 0;   /* Remove rounded corners */
     display: flex;      /* Use flexbox to manage header/content */
     flex-direction: column; /* Stack header above content */
-    overflow: hidden;
+    overflow: hidden;   /* Ensure container clips overflow */
   }
 
   /* --- Modal Header (Mobile) --- */
@@ -214,13 +214,14 @@ body {
   /* --- Modal Content (Mobile) --- */
   #modal-content {
     max-width: none;    /* Remove desktop max-width limit */
-    flex-grow: 1;       /* Allow content area to fill available space */
-    height: auto;       /* Let height be determined by flexbox */
+    /* flex-grow: 1; */    /* Removed flex-grow */
+    height: calc(100vh - 40px); /* ADDED: Explicit height (adjust 40px if header is different) */
     max-height: none;   /* Remove desktop max-height limit */
     overflow-y: auto;   /* Keep vertical scrolling */
-    padding: 15px;      /* Adjust padding for smaller screen */
+    padding: 15px;      /* Adjust padding slightly if needed */
     text-align: left;   /* Align text to left by default on mobile */
-    touch-action: pan-y;
+    touch-action: pan-y; /* Keep touch action hint */
+    -webkit-overflow-scrolling: touch; /* ADDED: For momentum scrolling on iOS */
   }
 
   /* Re-center specific block elements if needed */
