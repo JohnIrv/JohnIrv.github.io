@@ -62,15 +62,16 @@ body {
 }
 #ticker-text-content a.ticker-link .ticker-link-works,
 #ticker-text-content a.ticker-link:visited .ticker-link-works {
-    color: black;
+    color: black; /* Standardized */
 }
 
-/* --- ADDED: Specific style for the @__johnirving handle --- */
+/* --- Unused Span Rule --- */
+/* (Present in Response #60, kept here for accuracy of revert) */
 #ticker-text-content a.ticker-link .ticker-link-handle,
 #ticker-text-content a.ticker-link:visited .ticker-link-handle {
     color: black; /* Force this part to be black */
 }
-/* --- End Add --- */
+/* --- End Unused Rule --- */
 
 /* Optional: Hover effect for the link */
 #ticker-text-content a.ticker-link:hover {
