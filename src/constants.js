@@ -232,6 +232,19 @@ export const PROJECTS = [
             'images/futureperfect3.png'
         ],
     },
+    { // index 10
+        title: 'A24',
+        url: '#',
+        subtitle: "",
+        description: "<p>I provided 3D Illustrations or the 'Pain is Temporary' Zine that accompanied the release of Benny Safdie's 'The Smashing Machine'.</p>",
+        localVideoPath: 'videos/Constellation Final Render.mp4',
+        additionalImages: [
+            'images/futureperfect1.png',
+            'images/futureperfect2.png',
+            'images/futureperfect3.png'
+        ],
+    },
+    
 ];
 
 // Paths for the 3D models used in the scene, loaded via GLTFLoader
