@@ -197,7 +197,7 @@ export const PROJECTS = [
         subtitle: "Confidential Client",
         description: "<p>I produced a suite of photorealistic 3D renderings for a luxury furniture collection, designed specifically for their online catalogue and e-commerce platform.</p><p>This necessitated close collaboration with the company's creative team to ensure that furniture, scenery and lighting adhered seamlessly to their established brand identity.</p>",
         youtubeEmbedUrl: '',
-        centerpieceImages: [ // <<< ADDED THIS ARRAY for large images
+        centerpieceImages: [
             'images/ecommerce1.jpg',
             'images/ecommerce2.jpg',
             'images/ecommerce3.jpg',
@@ -211,7 +211,7 @@ export const PROJECTS = [
         subtitle: "",
         description: "<p>I collaborated with artist Cecile B. Evans on a series of special effects for their 2023 film, Reality Or Not.  The film premiered at Museo d’Arte Moderna di Bologna in Italy, and has since been featured in several prominent museums and galleries in France, the UK and Singapore.</p>",
         youtubeEmbedUrl: '',
-        centerpieceImages: [ // <<< ADDED THIS ARRAY for large images
+        centerpieceImages: [
             'images/cecile b evans4.png'
         ],
         additionalImages: [

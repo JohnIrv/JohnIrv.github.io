@@ -108,8 +108,8 @@ function showLightboxImage(index) {
 
     // Show/hide navigation buttons
     if (currentLightboxImages.length > 1) {
-        lightboxPrevBtn.style.display = 'inline-block'; // <<< CHANGED to inline-block
-        lightboxNextBtn.style.display = 'inline-block'; // <<< CHANGED to inline-block
+        lightboxPrevBtn.style.display = 'inline-block';
+        lightboxNextBtn.style.display = 'inline-block';
     } else {
         lightboxPrevBtn.style.display = 'none';
         lightboxNextBtn.style.display = 'none';
