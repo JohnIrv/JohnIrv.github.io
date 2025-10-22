@@ -237,7 +237,7 @@ export const PROJECTS = [
         url: '#',
         subtitle: "",
         description: "<p>I provided 3D Illustrations or the 'Pain is Temporary' Zine that accompanied the release of Benny Safdie's 'The Smashing Machine'.</p>",
-        localVideoPath: 'videos/Constellation Final Render.mp4',
+        localVideoPath: '',
         additionalImages: [],
     },
     
