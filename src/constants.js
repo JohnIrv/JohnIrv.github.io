@@ -236,7 +236,7 @@ export const PROJECTS = [
         title: 'A24',
         url: '#',
         subtitle: "",
-        description: "<p>I provided 3D Illustrations or the 'Pain is Temporary' Zine that accompanied the release of Benny Safdie's 'The Smashing Machine'.</p><p>Zine design and AD by Kurt Woerpel.</p>",
+        description: "<p>I provided 3D Illustrations or the 'Pain is Temporary' Zine that accompanied the release of Benny Safdie's 'The Smashing Machine'.</p><p>The Zine serves to further expand upon the background and characters of the film using a combination of remixed archival material from early 2000s fitness publications, and new features.</p><p>Zine design and AD by Kurt Woerpel.</p>",
         localVideoPath: '',
         centerpieceImages: [
             'images/TSM1.jpg'
@@ -244,7 +244,11 @@ export const PROJECTS = [
         additionalImages: [
             'images/TSM2.jpg',
             'images/TSM3.jpg',
-            'images/TSM4.jpg'
+            'images/TSM4.jpg',
+            'images/Rice 5 Gallon Bucket.png',
+            'images/Squat Stand.png',
+            'images/Step4.png',
+            'images/Step6.png'
         ],
     },
     
