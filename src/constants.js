@@ -238,12 +238,13 @@ export const PROJECTS = [
         subtitle: "",
         description: "<p>I provided 3D Illustrations or the 'Pain is Temporary' Zine that accompanied the release of Benny Safdie's 'The Smashing Machine'.</p><p>Zine design and AD by Kurt Woerpel.</p>",
         localVideoPath: '',
-        additionalImages: [
+        centerpieceImages: [
             'images/TSM1.jpg',
             'images/TSM2.jpg',
             'images/TSM3.jpg',
-            'images/TSM4.jpg'
+            'images/TSM4.jpg',
         ],
+        additionalImages: [],
     },
     
 ];
