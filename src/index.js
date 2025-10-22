@@ -17,7 +17,7 @@ const allImagePaths = [ /* Ensure your full list is here */
   'images/megan1.png', 'images/megan2.jpg', 'images/megan3.png', 'images/miu miu1.png', 'images/miu miu2.gif',
   'images/miu miu3.gif', 'images/miu miu4.webp', 'images/miu miu5.webp', 'images/moncler1.jpg', 'images/moncler2.jpg',
   'images/moncler3.jpg', 'images/moncler4.jpg', 'images/moncler5.jpg', 'images/moncler6.jpg', 'images/uzi1.png',
-  'images/uzi2.gif', 'images/uzi3.png', 'images/TSM1.jpg', 'images/TSM2.jpg', 'images/TSM3.jpg', 'images/TSM4.jpg', 'images/STEP6.png', 'images/Rice 5 Gallon Bucket.png', 
+  'images/uzi2.gif', 'images/uzi3.png', 'images/TSM1.jpg', 'images/TSM2.jpg', 'images/TSM3.jpg', 'images/TSM4.jpg', 'images/STEP4.png', 'images/Rice 5 Gallon Bucket.png', 
 ];
 // --- END Image List ---
 

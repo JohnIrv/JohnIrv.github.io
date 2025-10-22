@@ -246,8 +246,7 @@ export const PROJECTS = [
             'images/TSM3.jpg',
             'images/TSM4.jpg',
             'images/Rice 5 Gallon Bucket.png',
-            'images/STEP4.png',
-            'images/STEP6.png'
+            'images/STEP4.png'
         ],
     },
     
